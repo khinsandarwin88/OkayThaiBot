@@ -148,7 +148,7 @@
         transition: all 0.2s;
     }
     body.theme-default .option-btn.active {
-        background: #fff200;
+        background: var(--fff200);
         color: #19162c;
         box-shadow: 0 0 16px #ffe066;
     }
@@ -421,6 +421,12 @@
     .settings-btn {
         background: none; border: none; font-size: 1.8rem; cursor: pointer;
         opacity: 0.8; transition: opacity 0.2s, transform 0.2s; color: var(--text-primary);
+        /* Ensure icons are displayed correctly for settings buttons */
+        display: flex; /* Makes the content (icon) centered */
+        align-items: center;
+        justify-content: center;
+        width: 30px; /* Fixed width for better icon alignment */
+        height: 30px; /* Fixed height */
     }
     .settings-btn:hover { opacity: 1; transform: scale(1.1); }
     .header-title h1 { margin: 0; font-size: 1.5rem; color: var(--text-primary); text-shadow: 0 0 10px var(--accent-glow); }
@@ -555,8 +561,8 @@
             </div>
             <div class="top-right-settings">
                 <button class="settings-btn" id="greeting-btn" title="Play Greeting">🔊</button>
-                <button class="settings-btn" id="langBtn" title="Language"> 🌐 </button>
-                <button class="settings-btn" id="themeBtn" title="Theme"> 🎨 </button>
+                <button class="settings-btn" id="langBtn" title="Language">🌐</button>
+                <button class="settings-btn" id="themeBtn" title="Theme">🎨</button>
             </div>
         </div>
         <div id="chat-log"></div>
@@ -708,10 +714,10 @@
             yourName: 'Your Name', yourPhoneNumber: 'Your Phone Number', submit: 'Submit', contactSubmitted: 'Thank you! We have received your details and a staff member will contact you shortly.',
             enrollNowFull: 'Enroll Now (Full Version)', fillOutForm: 'Fill out Enrollment Form',
             schoolAddressLabel: 'Address', schoolPhoneLabel: 'Phone', schoolEmailLabel: 'Email', schoolHoursLabel: 'Business Hours',
-            contactUsTitle: 'Contact Us', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.en, // Link to schoolInfo
+            contactUsTitle: 'Contact Us', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.en,
             questionLabel: schoolInfo.questionLabel.en,
-            videoSamples: 'Video Samples', // New
-            videoSamplesPrompt: 'Here are some video samples from our classes and student life. Enjoy!' // New
+            videoSamples: 'Video Samples',
+            videoSamplesPrompt: 'Here are some video samples from our classes and student life. Enjoy!'
         },
         mm: {
             welcome: ' မင်္ဂလာပါ။  OKay Thai Language Center  မှ   ကြိုဆိုပါတယ်။   ကျွန်တော်က  AI Concierge  ပါ။ ဒီနေ့   ဘာအကူအညီပေးရမလဲခင်ဗျာ။ ',
@@ -747,10 +753,10 @@
             yourName: 'သင့်အမည်', yourPhoneNumber: 'သင့်ဖုန်းနံပါတ်', submit: 'ပေးပို့ရန်', contactSubmitted: schoolInfo.contactSuccess.mm,
             enrollNowFull: 'ယခုစာရင်းသွင်းရန် (အပြည့်အစုံ)', fillOutForm: 'စာရင်းသွင်းဖောင်ဖြည့်ရန်',
             schoolAddressLabel: 'လိပ်စာ', schoolPhoneLabel: 'ဖုန်း', schoolEmailLabel: 'အီးမေးလ်', schoolHoursLabel: 'ဖွင့်ချိန်',
-            contactUsTitle: 'ဆက်သွယ်ရန်', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.mm, // Link to schoolInfo
+            contactUsTitle: 'ဆက်သွယ်ရန်', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.mm,
             questionLabel: schoolInfo.questionLabel.mm,
-            videoSamples: 'ဗီဒီယိုနမူနာများ', // New
-            videoSamplesPrompt: 'ကျွန်ုပ်တို့၏အတန်းများနှင့် ကျောင်းသားဘဝမှ ဗီဒီယိုနမူနာအချို့ဖြစ်ပါသည်။ ကြည့်ရှုခံစားပါ။' // New
+            videoSamples: 'ဗီဒီယိုနမူနာများ',
+            videoSamplesPrompt: 'ကျွန်ုပ်တို့၏အတန်းများနှင့် ကျောင်းသားဘဝမှ ဗီဒီယိုနမူနာအချို့ဖြစ်ပါသည်။ ကြည့်ရှုခံစားပါ။'
         },
         th: {
             welcome: ' สวัสดีค่ะ ! ยินดีต้อนรับสู่  OKay Thai Language Center  ดิฉันคือ  AI Concierge  ค่ะ   วันนี้มีอะไรให้ช่วยคะ ',
@@ -786,10 +792,10 @@
             yourName: 'ชื่อของคุณ', yourPhoneNumber: 'เบอร์โทรศัพท์ของคุณ', submit: 'ส่ง', contactSubmitted: schoolInfo.contactSuccess.th,
             enrollNowFull: 'ลงทะเบียนตอนนี้ (ฉบับเต็ม)', fillOutForm: 'กรอกแบบฟอร์มลงทะเบียน',
             schoolAddressLabel: 'ที่อยู่', schoolPhoneLabel: 'โทรศัพท์', schoolEmailLabel: 'อีเมล', schoolHoursLabel: 'เวลาทำการ',
-            contactUsTitle: 'ติดต่อเรา', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.th, // Link to schoolInfo
+            contactUsTitle: 'ติดต่อเรา', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.th,
             questionLabel: schoolInfo.questionLabel.th,
-            videoSamples: 'วิดีโอตัวอย่าง', // New
-            videoSamplesPrompt: 'นี่คือวิดีโอตัวอย่างจากชั้นเรียนและชีวิตนักศึกษาของเรา ขอให้สนุกกับการรับชมค่ะ!' // New
+            videoSamples: 'วิดีโอตัวอย่าง',
+            videoSamplesPrompt: 'นี่คือวิดีโอตัวอย่างจากชั้นเรียนและชีวิตนักศึกษาของเรา ขอให้สนุกกับการรับชมค่ะ!'
         }
     };
     function t(key, ...args) {
@@ -803,7 +809,7 @@
         updateSettingsUI();
         populateSidebarNav(); // Re-populate sidebar with new language
         updateContactUsButtonText(); // Update Contact Us button text
-        updateSchoolInfo(); // Update school info in sidebar
+        // updateSchoolInfo(); // Not needed here as contact info is shown on click
         chatLog.innerHTML = '';
         startConversation();
     }
@@ -831,6 +837,10 @@
 
         // Update greeting button title
         greetingBtn.title = t(`${currentLanguage === 'th' ? 'sawasdeeGreeting' : currentLanguage === 'mm' ? 'mingalaparGreeting' : 'helloGreeting'}`);
+        // Ensure top-right settings buttons display correctly (set their inner text as emojis)
+        document.getElementById('greeting-btn').textContent = '🔊';
+        document.getElementById('langBtn').textContent = '🌐';
+        document.getElementById('themeBtn').textContent = '🎨';
     }
     function openPanel(panelId) { document.getElementById(panelId).style.display = 'flex'; }
     function closePanel(panelId) { document.getElementById(panelId).style.display = 'none'; }
@@ -853,6 +863,18 @@
 
     function addButton(translationKey, action, targetArea = userInputArea, iconHtml = '') {
         const button = document.createElement('button');
+        // Check if it's the Facebook link, which is an anchor tag
+        if (translationKey === 'facebookPage' && targetArea !== userInputArea) { // Facebook button is a special case (<a> tag)
+            const anchor = document.createElement('a');
+            anchor.href = "https://www.facebook.com/share/1AhRXANLEm/?mibextid=wwXIfr";
+            anchor.target = "_blank";
+            anchor.className = 'action-button facebook-link'; // Use the same styling classes
+            anchor.innerHTML = `<span class="button-icon">📘</span> <span class="button-text">${t('facebookPage')}</span>`;
+            targetArea.appendChild(anchor);
+            return; // Exit as we've appended an anchor, not a button
+        }
+
+
         button.className = 'action-button';
         const buttonText = t(translationKey);
 
@@ -1202,16 +1224,17 @@
         clearInputArea(); // Clear input buttons
         appendMessage('ai', t('videoSamplesPrompt'));
 
-        // *** IMPORTANT: REPLACE THESE WITH YOUR ACTUAL TIKTOK VIDEO EMBED CODES ***
-        // To get the embed code:
-        // 1. Go to your TikTok video in a web browser.
+        // *** IMPORTANT: You MUST replace these placeholders with YOUR ACTUAL TIKTOK VIDEO EMBED CODES ***
+        // To get the embed code for a TikTok video:
+        // 1. Go to your specific TikTok VIDEO (not photo) in a web browser (e.g., https://www.tiktok.com/@user/video/1234567890).
         // 2. Click the "Share" icon (usually a curved arrow).
         // 3. Select "Embed".
         // 4. Copy the entire HTML code provided.
-        // 5. Paste it here. Ensure 'data-video-id' and 'cite' match your video.
-        const tiktokEmbed1 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/PLACEHOLDER_VIDEO_ID_1" data-video-id="PLACEHOLDER_VIDEO_ID_1" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Sample Video 1 Description</p> <a target="_blank" title="♬ original sound - okay.thai.languag" href="https://www.tiktok.com/music/original-sound-PLACEHOLDER_MUSIC_ID_1">♬ original sound - okay.thai.languag</a> </section> </blockquote>`;
+        // 5. Replace 'data-video-id', 'cite', and all other content inside the <section> tags
+        //    with the actual values from the embed code you copied.
+        const tiktokEmbed1 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/7494481313777372423" data-video-id="7494481313777372423" style="max-width: 605px; min-width: 325px;"> <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Enjoy our class activities!</p> <a target="_blank" title="♬ original sound - OKay Thai Language Center" href="https://www.tiktok.com/music/original-sound-7494481313777372423">♬ original sound - OKay Thai Language Center</a> </section> </blockquote>`;
 
-        const tiktokEmbed2 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/PLACEHOLDER_VIDEO_ID_2" data-video-id="PLACEHOLDER_VIDEO_ID_2" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Sample Video 2 Description</p> <a target="_blank" title="♬ original sound - okay.thai.languag" href="https://www.tiktok.com/music/original-sound-PLACEHOLDER_MUSIC_ID_2">♬ original sound - okay.thai.languag</a> </section> </blockquote>`;
+        const tiktokEmbed2 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/7413651737178934536" data-video-id="7413651737178934536" style="max-width: 605px; min-width: 325px;"> <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Learn Thai with fun!</p> <a target="_blank" title="♬ original sound - OKay Thai Language Center" href="https://www.tiktok.com/music/original-sound-7413651737178934536">♬ original sound - OKay Thai Language Center</a> </section> </blockquote>`;
 
         const videoContainer = document.createElement('div');
         videoContainer.className = 'video-sample-container';
@@ -1223,10 +1246,11 @@
 
         appendMessage('ai', videoContainer.outerHTML); // Append the whole container
 
-        // Important: After adding embeds dynamically, TikTok's embed.js might need to re-scan the DOM.
-        // It usually does this automatically if the script is loaded.
-        // If embeds don't render, you might need to manually trigger TikTok's rendering function
-        // which can be accessed via window.tiktok.embed.refresh() if it's exposed, but often not necessary.
+        // If embeds don't render after being added, TikTok's embed.js might need to re-scan.
+        // It usually handles this automatically if loaded, but a potential fallback for debugging:
+        // if (window.tiktok && window.tiktok.embed && window.tiktok.embed.refresh) {
+        //     window.tiktok.embed.refresh();
+        // }
 
         addButton('mainMenu', startConversation);
         addButton('askAnother', () => handleFreeformQuestion(t('anythingElse')));
@@ -1258,9 +1282,10 @@
             { category: 'Teaching Method', question: {en: 'Who are the instructors?', mm: ' ဘယ်သူတွေသင်ကြားပေးမှာလဲ ', th: ' ใครเป็นผู้สอน '}, answer: {en: 'Teachers who have graduated with a major in Thai from the Yangon University of Foreign Languages will provide systematic instruction from the basics.', mm: ' ရန်ကုန်နိုင်ငံခြားဘာသာတက္ကသိုလ်မှ   ထိုင်းဘာသာအထူးပြုဖြင့်   ဘွဲ့ရထားသော   ဆရာ၊ဆရာမများမှ   အခြေခံမှစပြီး   စနစ်တကျသင်ကြားပေးပါတယ်ရှင့် ', th: ' ครูที่สำเร็จการศึกษา  chuyên ngành ภาษาไทยจากมหาวิทยาลัยภาษาต่างประเทศย่างกุ้งจะสอนอย่างเป็นระบบตั้งแต่พื้นฐาน '} },
             { category: 'Course Information', question: {en: 'Are there different levels in Thai language?', mm: ' ထိုင်းဘာသာမှာ  Level  ခွဲထားတာရှိလား ', th: ' ภาษาไทยมีระดับต่างๆ   หรือไม่ '}, answer: {en: 'In our school, the basic 4 skills class has 3 levels: Level 1, 2, and 3. The Thai speaking class is only offered at the basic level.', mm: ' ညီမတို့   သင်တန်းကျောင်းမှာ   အခြေခံ  4 skills  ကတော့  Level 1,2,3  ဆိုပြီး  3  ဆင့်ရှိပါတယ်ရှင့်   ထိုင်းစကားပြောအတန်းလေးကတော့    အခြေခံအတန်လေးဘဲဖွင့်ထားပါတယ်ရှင့် ', th: ' ที่โรงเรียนของเรา   คลาส  4  ทักษะพื้นฐานมี  3  ระดับคือ   ระดับ  1, 2  และ  3  ส่วนคลาสพูดภาษาไทยเปิดสอนเฉพาะระดับพื้นฐานเท่านั้น '} },
             { category: 'Teaching Method', question: {en: 'How are the classes taught?', mm: ' ဘယ်ကနေ   သင်ကြားပေးမှာလဲ ', th: ' สอนอย่างไร '}, answer: {en: 'We teach directly face-to-face with the teacher via the Zoom app. Before the class starts, a group is created on Telegram with the teacher. After the class, the video recording of the lesson is sent back to the Telegram group. If you miss a class for any reason, you can re-watch the video recordings.', mm: 'Zoom app  ကနေ   ဆရာမနဲ့  face to face  တိုက်ရိုက်သင်ပေးတာပါရှင့်   အတန်းမစခင်   ဆရာမနဲ့  Telegram  မှာ  group  ဖွဲ့ပေးထားပြီး   အတန်းချိန်ပြီးသွားတာနဲ့   သင်ထားတဲ့  video recording  ကို  Telegram group  ထဲမှာ   ပြန်ပို့ပေးပါတယ်ရှင့်   အကြောင်းတစ်စုံတစ်ရာကြောင့်   အတန်းပျက်ခဲ့လျှင်  video recording  များကို   ပြန်လည်ကြည့်ရူနိုင်ပါတယ်ရှင့် ', th: ' เราสอนแบบเห็นหน้ากับครูโดยตรงผ่านแอป  Zoom  ก่อนเริ่มเรียนจะมีการสร้างกลุ่มใน  Telegram  กับครู   หลังจากเรียนเสร็จแล้ว   วิดีโอบันทึกการสอนจะถูกส่งกลับไปในกลุ่ม  Telegram  หากคุณขาดเรียนด้วยเหตุผลใดก็ตาม   คุณสามารถดูวิดีโอบันทึกย้อนหลังได้ '} },
-            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁๔၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
+            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁၄၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
         ],
         lecturers: [
+            // Your lecturer data remains here with photo URLs
             { name: "TR. ZAW", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "5 years teaching experiences", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "}, photo: 'images/tr_zaw.jpg' },
             { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Translator and Interpreter in Toyota Company", mm: "Toyota  ကုမ္ပဏီတွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยในบริษัทโตโยต้า "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_phyu.jpg' },
             { name: "TR. SHWE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Thai translator and interpreter in Golden Sea MyanmarCo.,Ltd", mm: "Golden Sea Myanmar Co.,Ltd  တွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยใน  Golden Sea Myanmar Co.,Ltd"}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_shwe.jpg' },
@@ -1270,7 +1295,7 @@
             { name: "TR. SAKAR", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "1 year working experience in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၁   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  1  ปีในบริษัทไทย "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_sakar.jpg' },
             { name: "TR. SEINN", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "3 years teaching experience", mm: " ၃   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  3  ปี "}, photo: 'images/tr_seinn.jpg' },
             { name: "TR. HSU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Linguist 1 year", mm: " ထိုင်းဘာသာဗေဒပညာရှင်   ၁   နှစ် ", th: " นักภาษาศาสตร์ไทย  1  ปี "}, teachingExperience: {en: "5 years teaching experience", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "}, photo: 'images/tr_hsu.jpg' },
-            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่าမဘာသာไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_phyu_2.jpg' } // Assuming this is a different Phyu or a unique ID
+            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_phyu_2.jpg' } // Assuming this is a different Phyu or a unique ID
         ]
     };
 
@@ -1285,20 +1310,15 @@
         addButton('askQuestion', showFaqOptions, sidebarNav, '❓');
         addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, '🧭');
         addButton('mainMenu', startConversation, sidebarNav, '🏠');
+
+        // The Contact Us button and Facebook link are now static HTML in the sidebar
+        // and their text content is updated by JS.
     }
 
-    // Update school info in sidebar (now only triggered on language change, as the button replaces it)
-    function updateSchoolInfo() {
-        // This function is still called by setLanguage, but the content is handled by showContactDetails
-        // when the user clicks the "Contact Us" button.
-        // The school-info-card element is now just a placeholder for the button text via JS,
-        // and its content is rendered in chatLog.
-    }
-
-    // New: Update Contact Us button text
+    // Update Contact Us button text
     function updateContactUsButtonText() {
         if (contactInfoBtn) {
-            contactInfoBtn.querySelector('.button-text').textContent = t('contactUsButton');
+            contactInfoBtn.querySelector('.button-text').textContent = t('contactUsTitle'); // Changed to contactUsTitle
         }
     }
 
@@ -1365,6 +1385,7 @@
         greetingBtn.addEventListener('click', playGreetingSound);
 
         // Contact Us button in sidebar
+        // Ensure contactInfoBtn is defined before adding listener
         if (contactInfoBtn) {
             contactInfoBtn.addEventListener('click', showContactDetails);
             updateContactUsButtonText(); // Set initial text
