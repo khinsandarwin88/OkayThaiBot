@@ -123,14 +123,24 @@
         font-family: var(--font-bold);
     }
     body.theme-default .settings-btn {
-        color: #fff200;
-        text-shadow: 0 0 8px #ffe066;
-        font-size: 2.2rem;
-        transition: transform 0.2s, color 0.2s;
+        color: var(--text-primary); /* Use text-primary for icons for better visibility */
+        text-shadow: 0 0 8px var(--accent-glow); /* Add glow for consistency */
+        font-size: 1.8rem; /* Adjusted size for icons */
+        transition: transform 0.2s, color 0.2s, text-shadow 0.2s;
+        /* Ensure icons are displayed correctly for settings buttons */
+        display: flex; /* Makes the content (icon) centered */
+        align-items: center;
+        justify-content: center;
+        width: 35px; /* Fixed width for better icon alignment */
+        height: 35px; /* Fixed height */
+        border-radius: 50%; /* Make them circular */
+        border: 1px solid transparent; /* Subtle border */
+        background: rgba(255, 255, 255, 0.1); /* Slight background for definition */
     }
     body.theme-default .settings-btn:hover {
-        color: #ffe066;
+        color: var(--accent-secondary); /* Hover color */
         transform: scale(1.15) rotate(-8deg);
+        box-shadow: 0 0 15px var(--accent-glow); /* Stronger glow on hover */
     }
     body.theme-default #chat-log::-webkit-scrollbar-thumb {
         background: #ffe066;
@@ -185,6 +195,17 @@
     }
     body.theme-high-contrast .user .message-content, body.theme-high-contrast .user .avatar { color: #000; }
     body.theme-high-contrast .ai .avatar { background: #000; color: #fff; }
+    body.theme-high-contrast .settings-btn {
+        color: #000; /* High contrast setting button color */
+        text-shadow: none;
+        background: #fff;
+        border-color: #000;
+    }
+    body.theme-high-contrast .settings-btn:hover {
+        color: #fff;
+        background: #000;
+        box-shadow: 0 0 15px #ffc107;
+    }
 
     /* --- THEME: Low Sensory (Autism-Friendly) --- */
     body.theme-low-sensory {
@@ -205,6 +226,18 @@
     body.theme-low-sensory .user .avatar { background: var(--accent-secondary); color: #fff; }
     body.theme-low-sensory .star { display: none !important; } /* Hide stars */
     body.theme-low-sensory .chat-message { animation: none; } /* No animations */
+    body.theme-low-sensory .settings-btn {
+        color: var(--text-primary);
+        background: var(--ai-bubble-bg);
+        border-color: var(--border-glow);
+        text-shadow: none;
+        box-shadow: none;
+    }
+    body.theme-low-sensory .settings-btn:hover {
+        color: var(--text-secondary);
+        background: var(--button-hover-bg);
+        box-shadow: none;
+    }
 
     /* --- THEME: Pride (LGBTQ+ Friendly) --- */
     body.theme-pride {
@@ -224,6 +257,18 @@
     body.theme-pride .action-button:hover { opacity: 1; }
     body.theme-pride .header-title h1 { text-shadow: 0 0 10px #fff; }
     body.theme-pride .ai .avatar { background: linear-gradient(45deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787); color: white; }
+    body.theme-pride .settings-btn {
+        color: #fff;
+        text-shadow: 0 0 10px #E40303;
+        background: rgba(255,255,255,0.2);
+        border-color: #E40303;
+    }
+    body.theme-pride .settings-btn:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.3);
+        box-shadow: 0 0 20px #FFED00;
+    }
+
 
     /* --- BASE STYLES --- */
     body {
@@ -418,17 +463,6 @@
         /* Positioned within chat-header's right side using justify-content: flex-end on chat-header */
     }
 
-    .settings-btn {
-        background: none; border: none; font-size: 1.8rem; cursor: pointer;
-        opacity: 0.8; transition: opacity 0.2s, transform 0.2s; color: var(--text-primary);
-        /* Ensure icons are displayed correctly for settings buttons */
-        display: flex; /* Makes the content (icon) centered */
-        align-items: center;
-        justify-content: center;
-        width: 30px; /* Fixed width for better icon alignment */
-        height: 30px; /* Fixed height */
-    }
-    .settings-btn:hover { opacity: 1; transform: scale(1.1); }
     .header-title h1 { margin: 0; font-size: 1.5rem; color: var(--text-primary); text-shadow: 0 0 10px var(--accent-glow); }
     .header-title p { margin: 5px 0 0; color: var(--text-secondary); font-size: 0.9rem; }
     #chat-log { flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
@@ -545,7 +579,7 @@
             </nav>
 
         <button class="action-button school-info-button" id="contactInfoBtn">
-            <span class="button-icon">📞</span> <span class="button-text">Contact Us</span>
+            <span class="button-icon">📞</span> <span class="button-text"></span>
         </button>
 
         <a href="https://www.facebook.com/share/1AhRXANLEm/?mibextid=wwXIfr" target="_blank" class="action-button facebook-link">
@@ -717,7 +751,8 @@
             contactUsTitle: 'Contact Us', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.en,
             questionLabel: schoolInfo.questionLabel.en,
             videoSamples: 'Video Samples',
-            videoSamplesPrompt: 'Here are some video samples from our classes and student life. Enjoy!'
+            videoSamplesPrompt: 'Here are some video samples from our classes and student life. Enjoy!',
+            facebookPage: 'Facebook Page' /* Added for consistency, though currently static */
         },
         mm: {
             welcome: ' မင်္ဂလာပါ။  OKay Thai Language Center  မှ   ကြိုဆိုပါတယ်။   ကျွန်တော်က  AI Concierge  ပါ။ ဒီနေ့   ဘာအကူအညီပေးရမလဲခင်ဗျာ။ ',
@@ -756,7 +791,8 @@
             contactUsTitle: 'ဆက်သွယ်ရန်', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.mm,
             questionLabel: schoolInfo.questionLabel.mm,
             videoSamples: 'ဗီဒီယိုနမူနာများ',
-            videoSamplesPrompt: 'ကျွန်ုပ်တို့၏အတန်းများနှင့် ကျောင်းသားဘဝမှ ဗီဒီယိုနမူနာအချို့ဖြစ်ပါသည်။ ကြည့်ရှုခံစားပါ။'
+            videoSamplesPrompt: 'ကျွန်ုပ်တို့၏အတန်းများနှင့် ကျောင်းသားဘဝမှ ဗီဒီယိုနမူနာအချို့ဖြစ်ပါသည်။ ကြည့်ရှုခံစားပါ။',
+            facebookPage: 'Facebook Page' /* Added for consistency, though currently static */
         },
         th: {
             welcome: ' สวัสดีค่ะ ! ยินดีต้อนรับสู่  OKay Thai Language Center  ดิฉันคือ  AI Concierge  ค่ะ   วันนี้มีอะไรให้ช่วยคะ ',
@@ -795,7 +831,8 @@
             contactUsTitle: 'ติดต่อเรา', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.th,
             questionLabel: schoolInfo.questionLabel.th,
             videoSamples: 'วิดีโอตัวอย่าง',
-            videoSamplesPrompt: 'นี่คือวิดีโอตัวอย่างจากชั้นเรียนและชีวิตนักศึกษาของเรา ขอให้สนุกกับการรับชมค่ะ!'
+            videoSamplesPrompt: 'นี่คือวิดีโอตัวอย่างจากชั้นเรียนและชีวิตนักศึกษาของเรา ขอให้สนุกกับการรับชมค่ะ!',
+            facebookPage: 'Facebook Page' /* Added for consistency, though currently static */
         }
     };
     function t(key, ...args) {
@@ -809,9 +846,8 @@
         updateSettingsUI();
         populateSidebarNav(); // Re-populate sidebar with new language
         updateContactUsButtonText(); // Update Contact Us button text
-        // updateSchoolInfo(); // Not needed here as contact info is shown on click
-        chatLog.innerHTML = '';
-        startConversation();
+        chatLog.innerHTML = ''; // Clear chat log
+        startConversation(); // Restart conversation in new language
     }
     function setTheme(theme) {
         currentTheme = theme;
@@ -835,12 +871,13 @@
             collapseBtn.title = t('collapseSidebar');
         }
 
-        // Update greeting button title
+        // Ensure top-right settings buttons display correctly (set their innerHTML as emojis)
+        // This is done to explicitly set the content as the emoji, preventing text issues
+        document.getElementById('greeting-btn').innerHTML = '🔊';
+        document.getElementById('langBtn').innerHTML = '🌐';
+        document.getElementById('themeBtn').innerHTML = '🎨';
+        // Update greeting button title after setting its content
         greetingBtn.title = t(`${currentLanguage === 'th' ? 'sawasdeeGreeting' : currentLanguage === 'mm' ? 'mingalaparGreeting' : 'helloGreeting'}`);
-        // Ensure top-right settings buttons display correctly (set their inner text as emojis)
-        document.getElementById('greeting-btn').textContent = '🔊';
-        document.getElementById('langBtn').textContent = '🌐';
-        document.getElementById('themeBtn').textContent = '🎨';
     }
     function openPanel(panelId) { document.getElementById(panelId).style.display = 'flex'; }
     function closePanel(panelId) { document.getElementById(panelId).style.display = 'none'; }
@@ -862,19 +899,16 @@
     function clearInputArea() { userInputArea.innerHTML = ''; }
 
     function addButton(translationKey, action, targetArea = userInputArea, iconHtml = '') {
-        const button = document.createElement('button');
-        // Check if it's the Facebook link, which is an anchor tag
-        if (translationKey === 'facebookPage' && targetArea !== userInputArea) { // Facebook button is a special case (<a> tag)
-            const anchor = document.createElement('a');
-            anchor.href = "https://www.facebook.com/share/1AhRXANLEm/?mibextid=wwXIfr";
-            anchor.target = "_blank";
-            anchor.className = 'action-button facebook-link'; // Use the same styling classes
-            anchor.innerHTML = `<span class="button-icon">📘</span> <span class="button-text">${t('facebookPage')}</span>`;
-            targetArea.appendChild(anchor);
-            return; // Exit as we've appended an anchor, not a button
+        // Handle the static Contact Us and Facebook Page links/buttons separately, as they are now
+        // fixed in the HTML and only need their text/icon updated.
+        if (translationKey === 'contactUsTitle' || translationKey === 'facebookPage') {
+            // These buttons are now managed via static HTML in the sidebar.
+            // Their text content is updated by updateContactUsButtonText()
+            // The populateSidebarNav() should not create new buttons for them.
+            return;
         }
 
-
+        const button = document.createElement('button');
         button.className = 'action-button';
         const buttonText = t(translationKey);
 
@@ -1001,6 +1035,24 @@
         } else {
             alert('Please fill in both your name and phone number.');
         }
+    }
+
+    // Function to show contact details directly in chat log
+    function showContactDetails() {
+        chatLog.innerHTML = ''; // Clear chat history
+        clearInputArea(); // Clear input buttons
+
+        const contactHtml = `<div class="card">
+            <h3>${t('contactUsTitle')}</h3>
+            <p><strong>${t('schoolAddressLabel')}:</strong> ${schoolInfo.address[currentLanguage]}</p>
+            <p><strong>${t('schoolPhoneLabel')}:</strong> ${schoolInfo.phone}</p>
+            <p><strong>${t('schoolEmailLabel')}:</strong> ${schoolInfo.email}</p>
+            <p><strong>${t('schoolHoursLabel')}:</strong> ${schoolInfo.businessHours[currentLanguage]}</p>
+        </div>`;
+
+        appendMessage('ai', contactHtml);
+        addButton('mainMenu', startConversation);
+        addButton('talkToHuman', requestHumanContact); // Option to talk to human
     }
 
 
@@ -1282,7 +1334,7 @@
             { category: 'Teaching Method', question: {en: 'Who are the instructors?', mm: ' ဘယ်သူတွေသင်ကြားပေးမှာလဲ ', th: ' ใครเป็นผู้สอน '}, answer: {en: 'Teachers who have graduated with a major in Thai from the Yangon University of Foreign Languages will provide systematic instruction from the basics.', mm: ' ရန်ကုန်နိုင်ငံခြားဘာသာတက္ကသိုလ်မှ   ထိုင်းဘာသာအထူးပြုဖြင့်   ဘွဲ့ရထားသော   ဆရာ၊ဆရာမများမှ   အခြေခံမှစပြီး   စနစ်တကျသင်ကြားပေးပါတယ်ရှင့် ', th: ' ครูที่สำเร็จการศึกษา  chuyên ngành ภาษาไทยจากมหาวิทยาลัยภาษาต่างประเทศย่างกุ้งจะสอนอย่างเป็นระบบตั้งแต่พื้นฐาน '} },
             { category: 'Course Information', question: {en: 'Are there different levels in Thai language?', mm: ' ထိုင်းဘာသာမှာ  Level  ခွဲထားတာရှိလား ', th: ' ภาษาไทยมีระดับต่างๆ   หรือไม่ '}, answer: {en: 'In our school, the basic 4 skills class has 3 levels: Level 1, 2, and 3. The Thai speaking class is only offered at the basic level.', mm: ' ညီမတို့   သင်တန်းကျောင်းမှာ   အခြေခံ  4 skills  ကတော့  Level 1,2,3  ဆိုပြီး  3  ဆင့်ရှိပါတယ်ရှင့်   ထိုင်းစကားပြောအတန်းလေးကတော့    အခြေခံအတန်လေးဘဲဖွင့်ထားပါတယ်ရှင့် ', th: ' ที่โรงเรียนของเรา   คลาส  4  ทักษะพื้นฐานมี  3  ระดับคือ   ระดับ  1, 2  และ  3  ส่วนคลาสพูดภาษาไทยเปิดสอนเฉพาะระดับพื้นฐานเท่านั้น '} },
             { category: 'Teaching Method', question: {en: 'How are the classes taught?', mm: ' ဘယ်ကနေ   သင်ကြားပေးမှာလဲ ', th: ' สอนอย่างไร '}, answer: {en: 'We teach directly face-to-face with the teacher via the Zoom app. Before the class starts, a group is created on Telegram with the teacher. After the class, the video recording of the lesson is sent back to the Telegram group. If you miss a class for any reason, you can re-watch the video recordings.', mm: 'Zoom app  ကနေ   ဆရာမနဲ့  face to face  တိုက်ရိုက်သင်ပေးတာပါရှင့်   အတန်းမစခင်   ဆရာမနဲ့  Telegram  မှာ  group  ဖွဲ့ပေးထားပြီး   အတန်းချိန်ပြီးသွားတာနဲ့   သင်ထားတဲ့  video recording  ကို  Telegram group  ထဲမှာ   ပြန်ပို့ပေးပါတယ်ရှင့်   အကြောင်းတစ်စုံတစ်ရာကြောင့်   အတန်းပျက်ခဲ့လျှင်  video recording  များကို   ပြန်လည်ကြည့်ရူနိုင်ပါတယ်ရှင့် ', th: ' เราสอนแบบเห็นหน้ากับครูโดยตรงผ่านแอป  Zoom  ก่อนเริ่มเรียนจะมีการสร้างกลุ่มใน  Telegram  กับครู   หลังจากเรียนเสร็จแล้ว   วิดีโอบันทึกการสอนจะถูกส่งกลับไปในกลุ่ม  Telegram  หากคุณขาดเรียนด้วยเหตุผลใดก็ตาม   คุณสามารถดูวิดีโอบันทึกย้อนหลังได้ '} },
-            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁၄၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
+            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁๔၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
         ],
         lecturers: [
             // Your lecturer data remains here with photo URLs
@@ -1295,34 +1347,47 @@
             { name: "TR. SAKAR", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "1 year working experience in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၁   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  1  ปีในบริษัทไทย "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_sakar.jpg' },
             { name: "TR. SEINN", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "3 years teaching experience", mm: " ၃   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  3  ปี "}, photo: 'images/tr_seinn.jpg' },
             { name: "TR. HSU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Linguist 1 year", mm: " ထိုင်းဘာသာဗေဒပညာရှင်   ၁   နှစ် ", th: " นักภาษาศาสตร์ไทย  1  ปี "}, teachingExperience: {en: "5 years teaching experience", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "}, photo: 'images/tr_hsu.jpg' },
-            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_phyu_2.jpg' } // Assuming this is a different Phyu or a unique ID
+            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่าမဘာသာไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_phyu_2.jpg' } // Assuming this is a different Phyu or a unique ID
         ]
     };
 
     // Function to populate the sidebar navigation
     function populateSidebarNav() {
-        sidebarNav.innerHTML = ''; // Clear existing buttons
+        sidebarNav.innerHTML = ''; // Clear existing dynamic buttons
+
+        // Add dynamic navigation buttons
         addButton('findCourse', showCourseOptions, sidebarNav, '📚');
         addButton('findLevel', startLevelTest, sidebarNav, '🧠');
         addButton('conversationPractice', startConversationPractice, sidebarNav, '💬');
-        addButton('videoSamples', showVideoSamples, sidebarNav, '🎬'); // New Video Samples button
+        addButton('videoSamples', showVideoSamples, sidebarNav, '🎬');
         addButton('meetLecturers', showLecturers, sidebarNav, '🧑‍🏫');
         addButton('askQuestion', showFaqOptions, sidebarNav, '❓');
         addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, '🧭');
         addButton('mainMenu', startConversation, sidebarNav, '🏠');
 
-        // The Contact Us button and Facebook link are now static HTML in the sidebar
-        // and their text content is updated by JS.
+        // The "Contact Us" and "Facebook Page" elements are now static in HTML
+        // Their text content is updated by updateContactUsButtonText()
+        // No need to call addButton for them here anymore
     }
 
-    // Update Contact Us button text
+    // Update Contact Us button text (and now also for Facebook link if it needs translation)
     function updateContactUsButtonText() {
-        if (contactInfoBtn) {
-            contactInfoBtn.querySelector('.button-text').textContent = t('contactUsTitle'); // Changed to contactUsTitle
+        // Ensure the Contact Us button text is updated
+        const contactBtnTextSpan = document.getElementById('contactInfoBtn').querySelector('.button-text');
+        if (contactBtnTextSpan) {
+            contactBtnTextSpan.textContent = t('contactUsTitle');
+        }
+
+        // Ensure the Facebook link text is updated if it were dynamic
+        // Since Facebook page button text is static, this might not be strictly necessary,
+        // but included for completeness if you decide to translate it.
+        const facebookLinkTextSpan = document.querySelector('.facebook-link .button-text');
+        if (facebookLinkTextSpan) {
+            facebookLinkTextSpan.textContent = t('facebookPage');
         }
     }
 
-    // New: Play greeting sound using Web Speech API
+    // Play greeting sound using Web Speech API
     function playGreetingSound() {
         const utterance = new SpeechSynthesisUtterance();
         let greetingText;
@@ -1359,7 +1424,7 @@
         currentLanguage = loadFromStorage('okayThaiLang', 'en');
         currentTheme = loadFromStorage('okayThaiTheme', 'theme-default');
         setTheme(currentTheme);
-        updateSettingsUI();
+        updateSettingsUI(); // Initial update for all UI elements
 
         // Event listeners for settings panels
         document.getElementById('langBtn').addEventListener('click', () => openPanel('language-panel'));
@@ -1388,12 +1453,11 @@
         // Ensure contactInfoBtn is defined before adding listener
         if (contactInfoBtn) {
             contactInfoBtn.addEventListener('click', showContactDetails);
-            updateContactUsButtonText(); // Set initial text
+            updateContactUsButtonText(); // Set initial text for Contact Us and Facebook
         }
 
         createStars();
-        populateSidebarNav(); // Populate sidebar on load
-        // updateSchoolInfo(); // No longer needed here as info is displayed on button click
+        populateSidebarNav(); // Populate dynamic sidebar navigation buttons on load
         startConversation(); // Start the conversation in the main chat window
     });
 </script>
