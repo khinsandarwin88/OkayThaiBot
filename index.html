@@ -12,6 +12,7 @@
         --font-bold: 'Montserrat', sans-serif;
         --border-radius: 16px;
         --sidebar-width: 250px; /* Define sidebar width */
+        --collapsed-sidebar-width: 60px; /* Width when collapsed */
     }
 
     /* --- THEME: Celestial Aura (Default) --- USER UPDATED --- */
@@ -261,6 +262,7 @@
         z-index: 1;
         background: var(--bg-chat-window); /* Apply background to app-container */
         backdrop-filter: blur(10px);
+        position: relative; /* For absolute positioning of settings */
     }
 
     /* Sidebar styles */
@@ -274,10 +276,21 @@
         gap: 1rem;
         border-radius: var(--border-radius) 0 0 var(--border-radius);
         position: relative;
+        transition: width 0.3s ease-in-out; /* Smooth collapse transition */
+    }
+    .sidebar.collapsed {
+        width: var(--collapsed-sidebar-width);
+        align-items: center; /* Center items when collapsed */
+        padding: 1.5rem 0.5rem; /* Reduced padding when collapsed */
     }
     .sidebar-header {
         text-align: center;
         margin-bottom: 1.5rem;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .sidebar.collapsed .sidebar-header {
+        opacity: 0;
+        pointer-events: none; /* Disable interaction when hidden */
     }
     .sidebar-header h1 {
         margin: 0;
@@ -296,6 +309,10 @@
         display: flex;
         flex-direction: column;
         gap: 0.8rem;
+        flex-grow: 1; /* Allows nav to take available space */
+    }
+    .sidebar.collapsed .sidebar-nav .action-button .button-text {
+        display: none; /* Hide text when collapsed */
     }
     .sidebar .action-button {
         width: 100%;
@@ -303,10 +320,26 @@
         padding: 12px 15px;
         font-size: 1rem;
         justify-content: flex-start; /* Align text to start */
+        display: flex; /* Allow icon and text to be side-by-side */
+        align-items: center;
+        gap: 10px; /* Space between icon and text */
+        overflow: hidden; /* Hide overflow when text is hidden */
+    }
+    .sidebar .action-button .button-icon {
+        font-size: 1.2em; /* Adjust icon size */
+        flex-shrink: 0;
+    }
+    .sidebar .action-button .button-text {
+        transition: opacity 0.3s ease-in-out;
+    }
+    .sidebar.collapsed .sidebar-nav .action-button {
+        text-align: center;
+        padding: 12px 0; /* Adjust padding for icon-only */
+        justify-content: center;
     }
     .sidebar .action-button:hover {
         transform: none; /* Disable transform on sidebar buttons for a cleaner look */
-        box-shadow: 0 0 16px var(--accent-secondary), 0 3px 12px var(--ffe066);
+        box-shadow: 0 0 16px var(--accent-secondary), 0 3px 12px var(--accent-glow);
     }
     .settings-button-group {
         display: flex;
@@ -314,7 +347,33 @@
         margin-top: auto; /* Push to the bottom */
         padding-top: 1rem;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+        transition: opacity 0.3s ease-in-out;
     }
+    .sidebar.collapsed .settings-button-group {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Collapse button */
+    #collapse-btn {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 10;
+        transition: transform 0.2s;
+    }
+    #collapse-btn:hover {
+        transform: scale(1.1);
+    }
+    .sidebar.collapsed #collapse-btn {
+        right: 10px; /* Adjust position for collapsed state */
+    }
+
 
     /* Main chat window styles */
     .chat-window {
@@ -332,7 +391,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: relative; /* For greeting button */
     }
+
+    /* New: Top corner settings buttons */
+    .top-right-settings {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        z-index: 5;
+    }
+
     .settings-btn {
         background: none; border: none; font-size: 1.8rem; cursor: pointer;
         opacity: 0.8; transition: opacity 0.2s, transform 0.2s; color: var(--text-primary);
@@ -388,28 +459,45 @@
     }
     .option-btn.active { background: var(--accent-glow); color: #000; }
     .close-settings-btn { width: 100%; margin-top: 1rem; }
+
+    /* Greeting button specific style */
+    #greeting-btn {
+        margin-left: 15px; /* Adjust spacing from title */
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-primary);
+        transition: transform 0.2s, color 0.2s;
+    }
+    #greeting-btn:hover {
+        transform: scale(1.1);
+        color: var(--accent-secondary);
+    }
 </style>
 </head>
 <body>
 <div id="star-background"></div>
-<div class="app-container"> <div class="sidebar">
+<div class="app-container"> <div class="sidebar" id="sidebar">
+        <button id="collapse-btn">☰</button>
         <div class="sidebar-header">
             <h1>OKay Thai Bot</h1>
             <p>Your AI Concierge</p>
         </div>
         <nav class="sidebar-nav" id="sidebar-nav">
             </nav>
-        <div class="settings-button-group">
-            <button class="settings-btn" id="langBtn" title="Language"> 🌐 </button>
-            <button class="settings-btn" id="themeBtn" title="Theme"> 🎨 </button>
         </div>
-    </div>
 
     <div class="chat-window">
         <div class="chat-header">
             <div class="header-title">
                 <h1>Chat with OKay Thai</h1>
                 <p>How can I assist you today?</p>
+            </div>
+            <button id="greeting-btn" title="Play Thai Greeting Sound">🔊</button>
+            <div class="top-right-settings">
+                <button class="settings-btn" id="langBtn" title="Language"> 🌐 </button>
+                <button class="settings-btn" id="themeBtn" title="Theme"> 🎨 </button>
             </div>
         </div>
         <div id="chat-log"></div>
@@ -446,12 +534,15 @@
     </div>
 </div>
 
-<script>
+<audio id="thai-greeting-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio> <script>
     // --- UTILITY & SETUP ---
     const chatLog = document.getElementById('chat-log');
     const userInputArea = document.getElementById('user-input-area');
     const starBackground = document.getElementById('star-background');
-    const sidebarNav = document.getElementById('sidebar-nav'); // New: reference to sidebar navigation
+    const sidebarNav = document.getElementById('sidebar-nav');
+    const sidebar = document.getElementById('sidebar'); // New: reference to sidebar
+    const collapseBtn = document.getElementById('collapse-btn'); // New: reference to collapse button
+    const thaiGreetingAudio = document.getElementById('thai-greeting-audio'); // New: reference to audio element
     let conversationState = {};
     let currentLanguage = 'en';
     let currentTheme = 'theme-default';
@@ -467,7 +558,7 @@
 
     function createStars() {
         const numStars = 100;
-        starBackground.innerHTML = ''; // Clear existing stars
+        starBackground.innerHTML = '';
         for (let i = 0; i < numStars; i++) {
             let star = document.createElement('div');
             star.className = 'star';
@@ -484,10 +575,10 @@
 
     // --- TRANSLATION DATA ---
     const translations = {
-        en: { welcome: ' สวัสดีค่ะ  (Sawasdee ka!) Welcome! I am your AI Concierge for the OKay Thai Language Center. How can I help you today?', findCourse: 'Find a Course for Me', askQuestion: 'Ask a Question', meetLecturers: 'Meet the Lecturers', goBack: 'Go Back', coursePrompt: 'I can definitely help with that! To recommend the perfect course, could you tell me what type of class you\'re interested in?', levelPrompt: (type) => `Great choice! For the ${type}, which level are you interested in?`, courseResultHeader: 'Your Recommended Course', enrollPrompt: 'I can guide you through enrollment for this course, or we can explore other options. What would you like to do?', enrollNow: 'Enroll Now!  ✨ ', exploreOther: 'Explore Other Courses', mainMenu: 'Main Menu', enrollSoon: 'This full enrollment feature is coming soon. For now, our staff will contact you via Facebook Messenger to complete your registration. Thank you!', startOver: 'Start Over', faqPrompt: 'I have answers to many common questions. Which of these topics can I help you with?', faqFollowUp: 'Can I help with another topic?', seeOtherQuestions: 'See Other Questions', lecturerIntro: 'Here are some of our highly qualified and experienced lecturers:', lecturerFollowUp: 'They bring a deep understanding of both cultures and a passion for teaching. What would you like to do next?', typeQuestion: 'Type your question here...', send: 'Send', thinking: 'OKay Thai Bot is thinking...', apiError: "I'm sorry, I couldn't generate a response right now. Please try again.", connectionError: "I seem to be having trouble connecting. Please check your connection and try again.", anythingElse: 'Is there anything else I can help you with?', askAnother: 'Ask Another Question  ✨ ', findLevel: 'Help Me Find My Level  🧠 ', levelTestIntro: 'Great! I will ask you 3 questions to help determine the best starting level for you. Let\'s begin!', levelTestResult: 'Thank you! Based on your answers, here is my recommendation:', levelRecommendation: (level) => `It looks like you have a good grasp of the basics! I recommend starting with our **Normal Class - ${level}** to build on your existing knowledge.`, levelCompleteBeginner: 'It looks like you\'re just starting your journey, which is exciting! I recommend our **Normal Class - Basic** course.', viewCourse: 'View This Course', conversationPractice: 'Conversation Practice  💬 ', culturalCompass: 'Cultural Compass  🧭 ', practiceIntro: 'Let\'s practice! Choose a real-world scenario:', practiceScenarioFood: 'Ordering Food', practiceScenarioTaxi: 'Calling a Taxi', practiceScenarioDirections: 'Asking for Directions', practiceSoon: 'Excellent choice! The full, interactive role-playing feature is a premium tool for enrolled students. Here\'s a preview of how it would start:', culturalIntro: 'I can certainly help with that. What deep cultural question do you have about Thailand?', howToReply: 'How should I reply?', replySuggestionFood: 'A good reply would be: " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - "I\'ll have the Pad Thai with fresh shrimp, please."', replySuggestionTaxi: 'A good reply would be: " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - "To Siam Paragon, please."', replySuggestionDirections: 'A good reply would be: " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - "Excuse me, which way is it to Wat Arun?"', nameLabel: 'Name', priceLabel: 'Price', durationLabel: 'Duration', methodLabel: 'Method', qualificationLabel: 'Qualification', workLabel: 'Work',
-        teachingLabel: 'Teaching' },
-        mm: { welcome: ' မင်္ဂလာပါ။  OKay Thai Language Center  မှ   ကြိုဆိုပါတယ်။   ကျွန်တော်က  AI Concierge  ပါ။ ဒီနေ့   ဘာအကူအညီပေးရမလဲခင်ဗျာ။ ', findCourse: ' သင်တန်းရှာရန် ', askQuestion: ' မေးခွန်းမေးရန် ', meetLecturers: ' ဆရာ / ဆရာမများနှင့်   တွေ့ဆုံရန် ', goBack: ' နောက်သို့ပြန်သွားရန် ', coursePrompt: ' ကျွန်တော်ကူညီနိုင်ပါတယ်။ သင့်အတွက်အကောင်းဆုံးသင်တန်းကိုအကြံပြုနိုင်ရန်   ဘယ်လိုသင်တန်းအမျိုးအစားကို   စိတ်ဝင်စားပါသလဲ။ ', levelPrompt: (type) => `${type}  အတွက်   ဘယ်အဆင့်ကို   စိတ်ဝင်စားပါသလဲ။ `, courseResultHeader: ' သင်၏   အကြံပြုသင်တန်း ', enrollPrompt: ' ဤသင်တန်းအတွက်   စာရင်းသွင်းရန်   လမ်းညွှန်ပေးနိုင်သည်   သို့မဟုတ်   အခြားရွေးချယ်စရာများကို   ရှာဖွေနိုင်ပါသည်။ ဘာလုပ်ချင်ပါသလဲ။ ', enrollNow: ' ယခုစာရင်းသွင်းပါ။   ✨ ', exploreOther: ' အခြားသင်တန်းများရှာဖွေရန် ', mainMenu: ' ပင်မမီနူး ', enrollSoon: ' ဤစာရင်းသွင်းခြင်းအင်္ဂါရပ်သည်   မကြာမီလာမည်။ လောလောဆယ်တွင်   ကျွန်ုပ်တို့၏ဝန်ထမ်းများက   သင့်စာရင်းသွင်းခြင်းကို   အပြီးသတ်ရန်  Facebook Messenger  မှတစ်ဆင့်   ဆက်သွယ်ပါမည်။   ကျေးဇူးတင်ပါသည်။ ', startOver: ' အစကနေပြန်စရန် ', faqPrompt: ' အမေးများသောမေးခွန်းများအတွက်   အဖြေများရှိပါသည်။   ဘယ်အကြောင်းအရာကို   ကူညီရမလဲ။ ', faqFollowUp: ' အခြားအကြောင်းအရာတစ်ခုခုကို   ကူညီနိုင်ပါသေးသလား။ ', seeOtherQuestions: ' အခြားမေးခွန်းများကြည့်ရန် ', lecturerIntro: ' ဤသည်မှာ   ကျွန်ုပ်တို့၏   အရည်အချင်းပြည့်မီပြီး   အတွေ့အကြုံရှိသော   ဆရာ / ဆရာမအချို့ဖြစ်ပါသည်။ ', lecturerFollowUp: ' သူတို့သည်   ယဉ်ကျေးမှုနှစ်ခုလုံးကို   နက်နက်နဲနဲနားလည်ပြီး   သင်ကြားရေးကို   စိတ်အားထက်သန်ကြသည်။   နောက်ဘာလုပ်ချင်ပါသလဲ။ ', typeQuestion: ' သင့်မေးခွန်းကို   ဤနေရာတွင်   ရိုက်ထည့်ပါ ...', send: ' ပို့ရန် ', thinking: 'OKay Thai Bot  စဉ်းစားနေသည် ...', apiError: " တောင်းပန်ပါတယ်။   အခုလောလောဆယ်   အဖြေမပေးနိုင်သေးပါဘူး။   ကျေးဇူးပြု၍   နောက်တစ်ကြိမ်ထပ်ကြိုးစားပါ။ ", connectionError: " ချိတ်ဆက်ရာတွင်   အခက်အခဲရှိနေပုံရသည်။   ကျေးဇူးပြု၍   သင်၏ချိတ်ဆက်မှုကိုစစ်ဆေးပြီး   နောက်တစ်ကြိမ်ထပ်ကြိုးစားပါ။ ", anythingElse: ' နောက်ထပ်ဘာများကူညီပေးရမလဲခင်ဗျာ။ ', askAnother: ' နောက်ထပ်မေးခွန်းတစ်ခုမေးရန်   ✨ ', findLevel: ' ကျွန်ုပ်၏အဆင့်ကိုရှာဖွေရန်ကူညီပါ   🧠 ', levelTestIntro: ' ကောင်းပါပြီ ! သင့်အတွက်   အကောင်းဆုံးအစပြုအဆင့်ကို   ဆုံးဖြတ်ရန်   မေးခွန်း   ၃   ခု   မေးပါမည်။   စလိုက်ကြရအောင်။ ', levelTestResult: ' ကျေးဇူးတင်ပါတယ် !  သင်၏အဖြေများပေါ်မူတည်၍   ဤသည်မှာ   ကျွန်ုပ်၏အကြံပြုချက်ဖြစ်ပါသည်။ ', levelRecommendation: (level) => ` သင်ဟာ   အခြေခံတွေကို   ကောင်းကောင်းနားလည်ထားပုံရပါတယ် ! သင့်ရဲ့ရှိပြီးသားအသိပညာကို   တည်ဆောက်ဖို့   ကျွန်ုပ်တို့ရဲ့  **Normal Class - ${level}** နဲ့   စတင်ဖို့   အကြံပြုလိုပါတယ်။ `, levelCompleteBeginner: ' သင်ဟာ   ခရီးတစ်ခုကို   အခုမှစတင်နေတာဖြစ်ပြီး   ဒါက   စိတ်လှုပ်ရှားစရာကောင်းပါတယ် ! ကျွန်ုပ်တို့ရဲ့  **Normal Class - Basic** သင်တန်းကို   အကြံပြုလိုပါတယ်။ ', viewCourse: ' ဤသင်တန်းကိုကြည့်ရန် ', conversationPractice: ' စကားပြောလေ့ကျင့်ခန်း   💬 ', culturalCompass: ' ယဉ်ကျေးမှုဆိုင်ရာမေးခွန်း   🧭 ', practiceIntro: ' လေ့ကျင့်ကြရအောင်။ လက်တွေ့ဘဝအခြေအနေတစ်ခုကို   ရွေးချယ်ပါ။ ', practiceScenarioFood: ' အစားအစာ   မှာယူခြင်း ', practiceScenarioTaxi: ' တက္ကစီ   ငှားရမ်းခြင်း ', practiceScenarioDirections: ' လမ်းညွှန်   မေးမြန်းခြင်း ', practiceSoon: ' ဒါက   ရွေးချယ်မှုကောင်းတစ်ခုပါ။ စာရင်းသွင်းပြီးနောက်   ပ ရီ မီယံကျောင်းသားအတွေ့အကြုံ၏   တစ်စိတ်တစ်ပိုင်းအဖြစ်   အပြန်အလှန်အကျိုးသက်ရောက်မှုရှိသော   အခန်းကဏ္ဍသရုပ်ဆောင်ခြင်းအင်္ဂါရပ်အပြည့်အစုံကို   ရရှိနိုင်မှာဖြစ်ပါတယ်။ ၎င်းသည်   ဤသို့စတင်မည်ဖြစ်သည် ...', culturalIntro: ' ကူညီနိုင်ပါတယ်။   ထိုင်းယဉ်ကျေးမှုနဲ့ပတ်သက်ပြီး   ဘယ်လိုနက်နဲတဲ့မေးခွန်းမျိုး   သိချင်ပါသလဲ။ ', howToReply: ' ဘယ်လိုပြန်ဖြေရမလဲ။ ', replySuggestionFood: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - " ผัดไทย   ပုစွန်လတ်နဲ့ပါ   ကျေးဇူးပြု၍ "  ဖြစ်သည်။ ', replySuggestionTaxi: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - "Siam Paragon  ကို   သွားပါ   ကျေးဇူးပြု၍ "  ဖြစ်သည်။ ', replySuggestionDirections: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - " တစ်ဆိတ်လောက်ပါ  Wat Arun  ကို   ဘယ်လမ်းက   သွားရမလဲ "  ဖြစ်သည်။ ', nameLabel: ' အမည် ', priceLabel: ' စျေးနှုန်း ', durationLabel: ' ကြာချိန် ', methodLabel: ' သင်ကြားနည်း ', qualificationLabel: ' အရည်အချင်း ', workLabel: ' အလုပ် ', teachingLabel: ' သင်ကြားမှု ' },
-        th: { welcome: ' สวัสดีค่ะ ! ยินดีต้อนรับสู่  OKay Thai Language Center  ดิฉันคือ  AI Concierge  ค่ะ   วันนี้มีอะไรให้ช่วยคะ ', findCourse: ' ค้นหาคอร์สของคุณ ', askQuestion: ' ถามคำถาม ', meetLecturers: ' พบกับอาจารย์ ', goBack: ' กลับไป ', coursePrompt: ' ช่วยได้แน่นอนค่ะ ! เพื่อแนะนำคอร์สที่สมบูรณ์แบบที่สุด   ไม่ทราบว่าสนใจคลาสประเภทไหนคะ ', levelPrompt: (type) => ` ยอดเยี่ยมค่ะ ! สำหรับ  ${type}  สนใจระดับไหนคะ `, courseResultHeader: ' คอร์สแนะนำของคุณ ', enrollPrompt: ' สามารถแนะนำขั้นตอนการลงทะเบียนสำหรับคอร์สนี้   หรือจะดูตัวเลือกอื่นๆ   ก่อนก็ได้ค่ะ   ต้องการทำอะไรต่อคะ ', enrollNow: ' ลงทะเบียนเลย ! ✨ ', exploreOther: ' ดูคอร์สอื่นๆ ', mainMenu: ' เมนูหลัก ', enrollSoon: ' ฟีเจอร์การลงทะเบียนเต็มรูปแบบกำลังจะมาในเร็วๆ   นี้ค่ะ   สำหรับตอนนี้   เจ้าหน้าที่จะติดต่อคุณผ่าน  Facebook Messenger  เพื่อดำเนินการลงทะเบียนให้เสร็จสิ้น   ขอบคุณที่ให้ความสนใจค่ะ !', startOver: ' เริ่มต้นใหม่ ', faqPrompt: ' มีคำตอบสำหรับคำถามที่พบบ่อยหลายข้อค่ะ   ไม่ทราบว่าสนใจหัวข้อไหนคะ ', faqFollowUp: ' มีหัวข้ออื่นให้ช่วยอีกไหมคะ ', seeOtherQuestions: ' ดูคำถามอื่นๆ ', lecturerIntro: ' นี่คือส่วนหนึ่งของอาจารย์ผู้ทรงคุณวุฒิและมีประสบการณ์ของเราค่ะ :', lecturerFollowUp: ' พวกเขามีความเข้าใจอย่างลึกซึ้งในทั้งสองวัฒนธรรมและความมุ่งมั่นในการสอนค่ะ   ต้องการทำอะไรต่อคะ ', typeQuestion: ' พิมพ์คำถามของคุณที่นี่ ...', send: ' ส่ง ', thinking: 'OKay Thai Bot  กำลังคิด ...', apiError: " ขออภัยค่ะ   ไม่สามารถสร้างคำตอบได้ในขณะนี้   กรุณาลองใหม่อีกครั้งค่ะ ", connectionError: " ดูเหมือนว่าจะมีปัญหาในการเชื่อมต่อ   กรุณาตรวจสอบการเชื่อมต่อของคุณแล้วลองใหม่อีกครั้งค่ะ ", anythingElse: ' มีอะไรให้ช่วยอีกไหมคะ ', askAnother: ' ถามคำถามอื่น ✨ ', findLevel: ' ช่วยฉันหาระดับของฉัน   🧠 ', levelTestIntro: ' เยี่ยมมากค่ะ ! ดิฉันจะถามคำถาม  3  ข้อเพื่อช่วยหาระดับเริ่มต้นที่ดีที่สุดสำหรับคุณ   มาเริ่มกันเลยค่ะ !', levelTestResult: ' ขอบคุณค่ะ ! จากคำตอบของคุณ   นี่คือคำแนะนำของดิฉันค่ะ :', levelRecommendation: (level) => ` ดูเหมือนว่าคุณมีความเข้าใจพื้นฐานเป็นอย่างดี ! ขอแนะนำให้เริ่มต้นด้วย  **Normal Class - ${level}** ของเราเพื่อต่อยอดจากความรู้ที่มีอยู่ค่ะ `, levelCompleteBeginner: ' ดูเหมือนว่าคุณเพิ่งเริ่มต้นการเดินทางซึ่งน่าตื่นเต้นมากค่ะ ! ขอแนะนำคอร์ส  **Normal Class - Basic** ของเราค่ะ ', viewCourse: ' ดูคอร์สนี้ ', conversationPractice: ' ฝึกสนทนา   💬 ', culturalCompass: ' เข็มทิศวัฒนธรรม   🧭 ', practiceIntro: ' มาฝึกกันเถอะ ! เลือกสถานการณ์จริง :', practiceScenarioFood: ' สั่งอาหาร ', practiceScenarioTaxi: ' เรียกแท็กซี่ ', practiceScenarioDirections: ' ถามทาง ', practiceSoon: ' เป็นตัวเลือกที่ยอดเยี่ยมค่ะ ! ฟีเจอร์การแสดงบทบาทสมมติแบบโต้ตอบเต็มรูปแบบเป็นส่วนหนึ่งของประสบการณ์นักเรียนพรีเมียมหลังจากการลงทะเบียนค่ะ   มันจะเริ่มต้นแบบนี้ ...', culturalIntro: ' ช่วยได้ค่ะ   มีคำถามเชิงลึกเกี่ยวกับวัฒนธรรมไทยอะไรที่อยากรู้คะ ', howToReply: ' ฉันควรตอบอย่างไร ?', replySuggestionFood: ' คำตอบที่ดีคือ  " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - " ขอผัดไทยกุ้งสดค่ะ "', replySuggestionTaxi: ' คำตอบที่ดีคือ  " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - " ไปสยามพารากอนครับ "', replySuggestionDirections: ' คำตอบที่ดีคือ  " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ "', nameLabel: ' ชื่อ ', priceLabel: ' ราคา ', durationLabel: ' ระยะเวลา ', methodLabel: ' วิธีการสอน ', qualificationLabel: ' คุณวุฒิ ', workLabel: ' การทำงาน ', teachingLabel: ' การสอน ' }
+        en: { welcome: ' สวัสดีค่ะ  (Sawasdee ka!) Welcome! I am your AI Concierge for the OKay Thai Language Center. How can I help you today?', findCourse: 'Find a Course for Me', askQuestion: 'Ask a Question', meetLecturers: 'Meet the Lecturers', goBack: 'Go Back', coursePrompt: 'I can definitely help with that! To recommend the perfect course, could you tell me what type of class you\'re interested in?', levelPrompt: (type) => `Great choice! For the ${type}, which level are you interested in?`, courseResultHeader: 'Your Recommended Course', enrollPrompt: 'I can guide you through enrollment for this course, or we can explore other options. What would you like to do?', enrollNow: 'Enroll Now!  ✨ ', exploreOther: 'Explore Other Courses', mainMenu: 'Main Menu', enrollSoon: 'This full enrollment feature is coming soon. For now, our staff will contact you via Facebook Messenger to complete your registration. Thank you!', startOver: 'Start Over', faqPrompt: 'I have answers to many common questions. Which of these topics can I help you with?', faqFollowUp: 'Can I help with another topic?', seeOtherQuestions: 'See Other Questions', lecturerIntro: 'Here are some of our highly qualified and experienced lecturers:', lecturerFollowUp: 'They bring a deep understanding of both cultures and a passion for teaching. What would you like to do next?', typeQuestion: 'Type your question here...', send: 'Send', thinking: 'OKay Thai Bot is thinking...', apiError: "I'm sorry, I couldn't generate a response right now. Please try again.", connectionError: "I seem to be having trouble connecting. Please check your connection and try again.", anythingElse: 'Is there anything else I can help with?', askAnother: 'Ask Another Question  ✨ ', findLevel: 'Help Me Find My Level  🧠 ', levelTestIntro: 'Great! I will ask you 3 questions to help determine the best starting level for you. Let\'s begin!', levelTestResult: 'Thank you! Based on your answers, here is my recommendation:', levelRecommendation: (level) => `It looks like you have a good grasp of the basics! I recommend starting with our **Normal Class - ${level}** to build on your existing knowledge.`, levelCompleteBeginner: 'It looks like you\'re just starting your journey, which is exciting! I recommend our **Normal Class - Basic** course.', viewCourse: 'View This Course', conversationPractice: 'Conversation Practice  💬 ', culturalCompass: 'Cultural Compass  🧭 ', practiceIntro: 'Let\'s practice! Choose a real-world scenario:', practiceScenarioFood: 'Ordering Food', practiceScenarioTaxi: 'Calling a Taxi', practiceScenarioDirections: 'Asking for Directions', practiceSoon: 'Excellent choice! The full, interactive role-playing feature is a premium tool for enrolled students. Here\'s a preview of how it would start:', culturalIntro: 'I can certainly help with that. What deep cultural question do you have about Thailand?', howToReply: 'How should I reply?', replySuggestionFood: 'A good reply would be: " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - "I\'ll have the Pad Thai with fresh shrimp, please."', replySuggestionTaxi: 'A good reply would be: " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - "To Siam Paragon, please."', replySuggestionDirections: 'A good reply would be: " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - "Excuse me, which way is it to Wat Arun?"', nameLabel: 'Name', priceLabel: 'Price', durationLabel: 'Duration', methodLabel: 'Method', qualificationLabel: 'Qualification', workLabel: 'Work',
+        teachingLabel: 'Teaching', collapseSidebar: 'Collapse Sidebar', expandSidebar: 'Expand Sidebar' },
+        mm: { welcome: ' မင်္ဂလာပါ။  OKay Thai Language Center  မှ   ကြိုဆိုပါတယ်။   ကျွန်တော်က  AI Concierge  ပါ။ ဒီနေ့   ဘာအကူအညီပေးရမလဲခင်ဗျာ။ ', findCourse: ' သင်တန်းရှာရန် ', askQuestion: ' မေးခွန်းမေးရန် ', meetLecturers: ' ဆရာ / ဆရာမများနှင့်   တွေ့ဆုံရန် ', goBack: ' နောက်သို့ပြန်သွားရန် ', coursePrompt: ' ကျွန်တော်ကူညီနိုင်ပါတယ်။ သင့်အတွက်အကောင်းဆုံးသင်တန်းကိုအကြံပြုနိုင်ရန်   ဘယ်လိုသင်တန်းအမျိုးအစားကို   စိတ်ဝင်စားပါသလဲ။ ', levelPrompt: (type) => `${type}  အတွက်   ဘယ်အဆင့်ကို   စိတ်ဝင်စားပါသလဲ။ `, courseResultHeader: ' သင်၏   အကြံပြုသင်တန်း ', enrollPrompt: ' ဤသင်တန်းအတွက်   စာရင်းသွင်းရန်   လမ်းညွှန်ပေးနိုင်သည်   သို့မဟုတ်   အခြားရွေးချယ်စရာများကို   ရှာဖွေနိုင်ပါသည်။ ဘာလုပ်ချင်ပါသလဲ။ ', enrollNow: ' ယခုစာရင်းသွင်းပါ။   ✨ ', exploreOther: ' အခြားသင်တန်းများရှာဖွေရန် ', mainMenu: ' ပင်မမီနူး ', enrollSoon: ' ဤစာရင်းသွင်းခြင်းအင်္ဂါရပ်သည်   မကြာမီလာမည်။ လောလောဆယ်တွင်   ကျွန်ုပ်တို့၏ဝန်ထမ်းများက   သင့်စာရင်းသွင်းခြင်းကို   အပြီးသတ်ရန်  Facebook Messenger  မှတစ်ဆင့်   ဆက်သွယ်ပါမည်။   ကျေးဇူးတင်ပါသည်။ ', startOver: ' အစကနေပြန်စရန် ', faqPrompt: ' အမေးများသောမေးခွန်းများအတွက်   အဖြေများရှိပါသည်။   ဘယ်အကြောင်းအရာကို   ကူညီရမလဲ။ ', faqFollowUp: ' အခြားအကြောင်းအရာတစ်ခုခုကို   ကူညီနိုင်ပါသေးသလား။ ', seeOtherQuestions: ' အခြားမေးခွန်းများကြည့်ရန် ', lecturerIntro: ' ဤသည်မှာ   ကျွန်ုပ်တို့၏   အရည်အချင်းပြည့်မီပြီး   အတွေ့အကြုံရှိသော   ဆရာ / ဆရာမအချို့ဖြစ်ပါသည်။ ', lecturerFollowUp: ' သူတို့သည်   ယဉ်ကျေးမှုနှစ်ခုလုံးကို   နက်နက်နဲနဲနားလည်ပြီး   သင်ကြားရေးကို   စိတ်အားထက်သန်ကြသည်။   နောက်ဘာလုပ်ချင်ပါသလဲ။ ', typeQuestion: ' သင့်မေးခွန်းကို   ဤနေရာတွင်   ရိုက်ထည့်ပါ ...', send: ' ပို့ရန် ', thinking: 'OKay Thai Bot  စဉ်းစားနေသည် ...', apiError: " တောင်းပန်ပါတယ်။   အခုလောလောဆယ်   အဖြေမပေးနိုင်သေးပါဘူး။   ကျေးဇူးပြု၍   နောက်တစ်ကြိမ်ထပ်ကြိုးစားပါ။ ", connectionError: " ချိတ်ဆက်ရာတွင်   အခက်အခဲရှိနေပုံရသည်။   ကျေးဇူးပြု၍   သင်၏ချိတ်ဆက်မှုကိုစစ်ဆေးပြီး   နောက်တစ်ကြိမ်ထပ်ကြိုးစားပါ။ ", anythingElse: ' နောက်ထပ်ဘာများကူညီပေးရမလဲခင်ဗျာ။ ', askAnother: ' နောက်ထပ်မေးခွန်းတစ်ခုမေးရန်   ✨ ', findLevel: ' ကျွန်ုပ်၏အဆင့်ကိုရှာဖွေရန်ကူညီပါ   🧠 ', levelTestIntro: ' ကောင်းပါပြီ ! သင့်အတွက်   အကောင်းဆုံးအစပြုအဆင့်ကို   ဆုံးဖြတ်ရန်   မေးခွန်း   ၃   ခု   မေးပါမည်။   စလိုက်ကြရအောင်။ ', levelTestResult: ' ကျေးဇူးတင်ပါတယ် !  သင်၏အဖြေများပေါ်မူတည်၍   ဤသည်မှာ   ကျွန်ုပ်၏အကြံပြုချက်ဖြစ်ပါသည်။ ', levelRecommendation: (level) => ` သင်ဟာ   အခြေခံတွေကို   ကောင်းကောင်းနားလည်ထားပုံရပါတယ် ! သင့်ရဲ့ရှိပြီးသားအသိပညာကို   တည်ဆောက်ဖို့   ကျွန်ုပ်တို့ရဲ့  **Normal Class - ${level}** နဲ့   စတင်ဖို့   အကြံပြုလိုပါတယ်။ `, levelCompleteBeginner: ' သင်ဟာ   ခရီးတစ်ခုကို   အခုမှစတင်နေတာဖြစ်ပြီး   ဒါက   စိတ်လှုပ်ရှားစရာကောင်းပါတယ် ! ကျွန်ုပ်တို့ရဲ့  **Normal Class - Basic** သင်တန်းကို   အကြံပြုလိုပါတယ်။ ', viewCourse: ' ဤသင်တန်းကိုကြည့်ရန် ', conversationPractice: ' စကားပြောလေ့ကျင့်ခန်း   💬 ', culturalCompass: ' ယဉ်ကျေးမှုဆိုင်ရာမေးခွန်း   🧭 ', practiceIntro: ' လေ့ကျင့်ကြရအောင်။ လက်တွေ့ဘဝအခြေအနေတစ်ခုကို   ရွေးချယ်ပါ။ ', practiceScenarioFood: ' အစားအစာ   မှာယူခြင်း ', practiceScenarioTaxi: ' တက္ကစီ   ငှားရမ်းခြင်း ', practiceScenarioDirections: ' လမ်းညွှန်   မေးမြန်းခြင်း ', practiceSoon: ' ဒါက   ရွေးချယ်မှုကောင်းတစ်ခုပါ။ စာရင်းသွင်းပြီးနောက်   ပ ရီ မီယံကျောင်းသားအတွေ့အကြုံ၏   တစ်စိတ်တစ်ပိုင်းအဖြစ်   အပြန်အလှန်အကျိုးသက်ရောက်မှုရှိသော   အခန်းကဏ္ဍသရုပ်ဆောင်ခြင်းအင်္ဂါရပ်အပြည့်အစုံကို   ရရှိနိုင်မှာဖြစ်ပါတယ်။ ၎င်းသည်   ဤသို့စတင်မည်ဖြစ်သည် ...', culturalIntro: ' ကူညီနိုင်ပါတယ်။   ထိုင်းယဉ်ကျေးမှုနဲ့ပတ်သက်ပြီး   ဘယ်လိုနက်နဲတဲ့မေးခွန်းမျိုး   သိချင်ပါသလဲ။ ', howToReply: ' ဘယ်လိုပြန်ဖြေရမလဲ။ ', replySuggestionFood: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - " ผัดไทย   ပုစွန်လတ်နဲ့ပါ   ကျေးဇူးပြု၍ "  ဖြစ်သည်။ ', replySuggestionTaxi: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - "Siam Paragon  ကို   သွားပါ   ကျေးဇူးပြု၍ "  ဖြစ်သည်။ ', replySuggestionDirections: ' ကောင်းသောပြန်စာတစ်ခုမှာ  " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - " တစ်ဆိတ်လောက်ပါ  Wat Arun  ကို   ဘယ်လမ်းက   သွားရမလဲ "  ဖြစ်သည်။ ', nameLabel: ' အမည် ', priceLabel: ' စျေးနှုန်း ', durationLabel: ' ကြာချိန် ', methodLabel: ' သင်ကြားနည်း ', qualificationLabel: ' အရည်အချင်း ', workLabel: ' အလုပ် ', teachingLabel: ' သင်ကြားမှု ', collapseSidebar: 'ဘေးဘောင်ပိတ်ရန်', expandSidebar: 'ဘေးဘောင်ဖွင့်ရန်' },
+        th: { welcome: ' สวัสดีค่ะ ! ยินดีต้อนรับสู่  OKay Thai Language Center  ดิฉันคือ  AI Concierge  ค่ะ   วันนี้มีอะไรให้ช่วยคะ ', findCourse: ' ค้นหาคอร์สของคุณ ', askQuestion: ' ถามคำถาม ', meetLecturers: ' พบกับอาจารย์ ', goBack: ' กลับไป ', coursePrompt: ' ช่วยได้แน่นอนค่ะ ! เพื่อแนะนำคอร์สที่สมบูรณ์แบบที่สุด   ไม่ทราบว่าสนใจคลาสประเภทไหนคะ ', levelPrompt: (type) => ` ยอดเยี่ยมค่ะ ! สำหรับ  ${type}  สนใจระดับไหนคะ `, courseResultHeader: ' คอร์สแนะนำของคุณ ', enrollPrompt: ' สามารถแนะนำขั้นตอนการลงทะเบียนสำหรับคอร์สนี้   หรือจะดูตัวเลือกอื่นๆ   ก่อนก็ได้ค่ะ   ต้องการทำอะไรต่อคะ ', enrollNow: ' ลงทะเบียนเลย ! ✨ ', exploreOther: ' ดูคอร์สอื่นๆ ', mainMenu: ' เมนูหลัก ', enrollSoon: ' ฟีเจอร์การลงทะเบียนเต็มรูปแบบกำลังจะมาในเร็วๆ   นี้ค่ะ   สำหรับตอนนี้   เจ้าหน้าที่จะติดต่อคุณผ่าน  Facebook Messenger  เพื่อดำเนินการลงทะเบียนให้เสร็จสิ้น   ขอบคุณที่ให้ความสนใจค่ะ !', startOver: ' เริ่มต้นใหม่ ', faqPrompt: ' มีคำตอบสำหรับคำถามที่พบบ่อยหลายข้อค่ะ   ไม่ทราบว่าสนใจหัวข้อไหนคะ ', faqFollowUp: ' มีหัวข้ออื่นให้ช่วยอีกไหมคะ ', seeOtherQuestions: ' ดูคำถามอื่นๆ ', lecturerIntro: ' นี่คือส่วนหนึ่งของอาจารย์ผู้ทรงคุณวุฒิและมีประสบการณ์ของเราค่ะ :', lecturerFollowUp: ' พวกเขามีความเข้าใจอย่างลึกซึ้งในทั้งสองวัฒนธรรมและความมุ่งมั่นในการสอนค่ะ   ต้องการทำอะไรต่อคะ ', typeQuestion: ' พิมพ์คำถามของคุณที่นี่ ...', send: ' ส่ง ', thinking: 'OKay Thai Bot  กำลังคิด ...', apiError: " ขออภัยค่ะ   ไม่สามารถสร้างคำตอบได้ในขณะนี้   กรุณาลองใหม่อีกครั้งค่ะ ", connectionError: " ดูเหมือนว่าจะมีปัญหาในการเชื่อมต่อ   กรุณาตรวจสอบการเชื่อมต่อของคุณแล้วลองใหม่อีกครั้งค่ะ ", anythingElse: ' มีอะไรให้ช่วยอีกไหมคะ ', askAnother: ' ถามคำถามอื่น ✨ ', findLevel: ' ช่วยฉันหาระดับของฉัน   🧠 ', levelTestIntro: ' เยี่ยมมากค่ะ ! ดิฉันจะถามคำถาม  3  ข้อเพื่อช่วยหาระดับเริ่มต้นที่ดีที่สุดสำหรับคุณ   มาเริ่มกันเลยค่ะ !', levelTestResult: ' ขอบคุณค่ะ ! จากคำตอบของคุณ   นี่คือคำแนะนำของดิฉันค่ะ :', levelRecommendation: (level) => ` ดูเหมือนว่าคุณมีความเข้าใจพื้นฐานเป็นอย่างดี ! ขอแนะนำให้เริ่มต้นด้วย  **Normal Class - ${level}** ของเราเพื่อต่อยอดจากความรู้ที่มีอยู่ค่ะ `, levelCompleteBeginner: ' ดูเหมือนว่าคุณเพิ่งเริ่มต้นการเดินทางซึ่งน่าตื่นเต้นมากค่ะ ! ขอแนะนำคอร์ส  **Normal Class - Basic** ของเราค่ะ ', viewCourse: ' ดูคอร์สนี้ ', conversationPractice: ' ฝึกสนทนา   💬 ', culturalCompass: ' เข็มทิศวัฒนธรรม   🧭 ', practiceIntro: ' มาฝึกกันเถอะ ! เลือกสถานการณ์จริง :', practiceScenarioFood: ' สั่งอาหาร ', practiceScenarioTaxi: ' เรียกแท็กซี่ ', practiceScenarioDirections: ' ถามทาง ', practiceSoon: ' เป็นตัวเลือกที่ยอดเยี่ยมค่ะ ! ฟีเจอร์การแสดงบทบาทสมมติแบบโต้ตอบเต็มรูปแบบเป็นส่วนหนึ่งของประสบการณ์นักเรียนพรีเมียมหลังจากการลงทะเบียนค่ะ   มันจะเริ่มต้นแบบนี้ ...', culturalIntro: ' ช่วยได้ค่ะ   มีคำถามเชิงลึกเกี่ยวกับวัฒนธรรมไทยอะไรที่อยากรู้คะ ', howToReply: ' ฉันควรตอบอย่างไร ?', replySuggestionFood: ' คำตอบที่ดีคือ  " เอาผัดไทยกุ้งสดค่ะ " (Ao Phat Thai goong sot kha) - " ขอผัดไทยกุ้งสดค่ะ "', replySuggestionTaxi: ' คำตอบที่ดีคือ  " ไปสยามพารากอนครับ " (Pai Siam Paragon krap) - " ไปสยามพารากอนครับ "', replySuggestionDirections: ' คำตอบที่ดีคือ  " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ " (Khothot na kha, pai Wat Arun thang nai kha?) - " ขอโทษนะคะ   ไปวัดอรุณทางไหนคะ "', nameLabel: ' ชื่อ ', priceLabel: ' ราคา ', durationLabel: ' ระยะเวลา ', methodLabel: ' วิธีการสอน ', qualificationLabel: ' คุณวุฒิ ', workLabel: ' การทำงาน ', teachingLabel: ' การสอน ', collapseSidebar: 'ยุบแถบด้านข้าง', expandSidebar: 'ขยายแถบด้านข้าง' }
     };
     function t(key, ...args) {
         const template = translations[currentLanguage][key] || translations['en'][key];
@@ -498,6 +589,7 @@
         currentLanguage = lang;
         saveToStorage('okayThaiLang', lang);
         updateSettingsUI();
+        populateSidebarNav(); // Re-populate sidebar with new language
         chatLog.innerHTML = '';
         startConversation();
     }
@@ -514,6 +606,14 @@
         document.querySelectorAll('#theme-options .option-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === currentTheme);
         });
+        // Update collapse button text based on current language
+        if (sidebar.classList.contains('collapsed')) {
+            collapseBtn.textContent = '☰'; // Icon for collapsed
+            collapseBtn.title = t('expandSidebar');
+        } else {
+            collapseBtn.textContent = '✖'; // Icon for expanded
+            collapseBtn.title = t('collapseSidebar');
+        }
     }
     function openPanel(panelId) { document.getElementById(panelId).style.display = 'flex'; }
     function closePanel(panelId) { document.getElementById(panelId).style.display = 'none'; }
@@ -534,15 +634,19 @@
     }
     function clearInputArea() { userInputArea.innerHTML = ''; }
 
-    // Modified addButton to target sidebar for persistent buttons
-    function addButton(translationKey, action, targetArea = userInputArea, ...args) {
+    function addButton(translationKey, action, targetArea = userInputArea, iconHtml = '') {
         const button = document.createElement('button');
         button.className = 'action-button';
-        const buttonText = t(translationKey, ...args);
-        button.textContent = buttonText;
+        const buttonText = t(translationKey);
+
+        if (targetArea === sidebarNav) {
+            button.innerHTML = `<span class="button-icon">${iconHtml}</span><span class="button-text">${buttonText}</span>`;
+        } else {
+            button.textContent = buttonText;
+        }
+
         button.onclick = () => {
-            // Only append user message if the button is in the main input area
-            if (targetArea === userInputArea) {
+            if(targetArea === userInputArea) { // Only append user message if button is in main input area
                 appendMessage('user', buttonText);
             }
             action();
@@ -575,8 +679,6 @@
         chatLog.innerHTML = ''; // Clear chat log on main menu
         clearInputArea();
         appendMessage('ai', t('welcome'));
-        // Main interaction buttons are now in the sidebar
-        // No need to add them here anymore for initial display in chat area
     }
 
     function showCourseOptions() {
@@ -676,6 +778,7 @@
     function startLevelTest() {
         testScore = 0;
         questionNumber = 1;
+        chatLog.innerHTML = ''; // Clear chat log to start fresh for test
         clearInputArea();
         appendMessage('ai', t('levelTestIntro'));
         askTestQuestion();
@@ -737,6 +840,7 @@
     }
     // --- CONVERSATION & CULTURE FLOWS ---
     function startConversationPractice() {
+        chatLog.innerHTML = ''; // Clear chat log to start fresh for practice
         clearInputArea();
         appendMessage('ai', t('practiceIntro'));
         addButton('practiceScenarioFood', () => handleScenario('Food'));
@@ -783,9 +887,11 @@
         handleFreeformQuestion(); // Use the existing freeform input for interaction
     }
 
-    function handleFreeformQuestion(introMessage = t('culturalIntro')) { // Re-purposed culturalIntro to be a general prompt
+    function handleFreeformQuestion(introMessage) { // introMessage is optional
         clearInputArea();
-        if (introMessage) appendMessage('ai', introMessage); // Only show intro message if provided
+        // Only append intro message if it's provided, prevents re-adding for subsequent questions
+        if (introMessage) appendMessage('ai', introMessage);
+
         const inputContainer = document.createElement('div');
         inputContainer.id = 'freeform-input-container';
         inputContainer.style.display = 'flex';
@@ -814,13 +920,13 @@
         // Enhanced prompt for the cultural chatbot
         const prompt = `You are a highly knowledgeable and friendly AI Chatbot with extensive expertise in both Thai and Myanmar cultures, history, and daily life. You are part of the "OKay Thai Language Center" and can also answer questions about the language center's courses, prices, and lecturers based on the provided internal data.
         The user asked: "${userQuestion}".
-        Provide a detailed, helpful, and engaging answer.
+        Provide a detailed, helpful, and engaging answer in ${currentLanguage}.
         Internal Data: Courses: Normal, Children, Basic Speaking, Private classes online. Prices: Basic courses start at MMK 149,000. Lecturers: All are experienced Myanmar nationals who graduated from Yangon University of Foreign Languages with a Thai major. Location: All classes are online.`;
 
         const aiResponse = await callGeminiAPI(prompt);
         appendMessage('ai', aiResponse.replace(/\n/g, '<br>'));
         appendMessage('ai', t('anythingElse'));
-        addButton('askAnother', () => handleFreeformQuestion('Is there anything else I can tell you about Thai or Myanmar culture?')); // Prompt for cultural follow-up
+        addButton('askAnother', () => handleFreeformQuestion(t('anythingElse'))); // Prompt for cultural follow-up
         addButton('mainMenu', startConversation);
     }
 
@@ -860,21 +966,20 @@
             { name: "TR. SAKAR", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "1 year working experience in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၁   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  1  ปีในบริษัทไทย "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "} },
             { name: "TR. SEINN", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "3 years teaching experience", mm: " ၃   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  3  ปี "} },
             { name: "TR. HSU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Linguist 1 year", mm: " ထိုင်းဘာသာဗေဒပညာရှင်   ၁   နှစ် ", th: " นักภาษาศาสตร์ไทย  1  ปี "}, teachingExperience: {en: "5 years teaching experience", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "} },
-            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "} }
+            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "} }
         ]
     };
 
     // Function to populate the sidebar navigation
     function populateSidebarNav() {
         sidebarNav.innerHTML = ''; // Clear existing buttons
-        addButton('findCourse', showCourseOptions, sidebarNav);
-        addButton('findLevel', startLevelTest, sidebarNav);
-        addButton('conversationPractice', startConversationPractice, sidebarNav);
-        addButton('meetLecturers', showLecturers, sidebarNav); // Moved from main chat header
-        addButton('askQuestion', showFaqOptions, sidebarNav); // Changed to FAQ, moved from main chat header
-        addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav); // Renamed and repurposed
-        // Add a "Main Menu" button if desired, or rely on other flows
-        addButton('mainMenu', startConversation, sidebarNav);
+        addButton('findCourse', showCourseOptions, sidebarNav, '📚');
+        addButton('findLevel', startLevelTest, sidebarNav, '🧠');
+        addButton('conversationPractice', startConversationPractice, sidebarNav, '💬');
+        addButton('meetLecturers', showLecturers, sidebarNav, '🧑‍🏫');
+        addButton('askQuestion', showFaqOptions, sidebarNav, '❓');
+        addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, '🧭');
+        addButton('mainMenu', startConversation, sidebarNav, '🏠');
     }
 
     // --- APP INITIALIZATION ---
@@ -884,6 +989,7 @@
         setTheme(currentTheme);
         updateSettingsUI();
 
+        // Moved language and theme buttons to top-right corner of app-container
         document.getElementById('langBtn').addEventListener('click', () => openPanel('language-panel'));
         document.getElementById('themeBtn').addEventListener('click', () => openPanel('theme-panel'));
         document.getElementById('closeLangBtn').addEventListener('click', () => closePanel('language-panel'));
@@ -894,6 +1000,17 @@
         });
         document.querySelectorAll('#theme-options .option-btn').forEach(btn => {
             btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+        });
+
+        // New: Sidebar collapse functionality
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            updateSettingsUI(); // Update button text/icon
+        });
+
+        // New: Thai greeting sound button
+        document.getElementById('greeting-btn').addEventListener('click', () => {
+            thaiGreetingAudio.play().catch(e => console.error("Error playing audio:", e));
         });
 
         createStars();
