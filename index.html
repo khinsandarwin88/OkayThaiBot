@@ -501,6 +501,29 @@
         background: var(--button-hover-bg);
         box-shadow: 0 0 16px var(--accent-secondary);
     }
+
+    /* Styles for TikTok embeds in cards */
+    .video-sample-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px; /* Space between multiple videos */
+        width: 100%;
+        max-width: 600px; /* Limit width of video embeds for better layout */
+        margin: auto; /* Center the container */
+    }
+    .video-sample-container .card {
+        width: 100%; /* Make card take full width of its container */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        padding: 10px;
+    }
+    /* TikTok embed specific adjustments */
+    blockquote.tiktok-embed {
+        margin: 0 !important; /* Remove default blockquote margin */
+        width: 100%; /* Make embed fill the card */
+        min-height: 400px; /* Ensure a minimum height for the video player */
+        background: black; /* Placeholder background */
+    }
 </style>
 </head>
 <body>
@@ -515,8 +538,9 @@
         <nav class="sidebar-nav" id="sidebar-nav">
             </nav>
 
-        <div class="school-info-card card">
-            </div>
+        <button class="action-button school-info-button" id="contactInfoBtn">
+            <span class="button-icon">📞</span> <span class="button-text">Contact Us</span>
+        </button>
 
         <a href="https://www.facebook.com/share/1AhRXANLEm/?mibextid=wwXIfr" target="_blank" class="action-button facebook-link">
             <span class="button-icon">📘</span> <span class="button-text">Facebook Page</span>
@@ -569,6 +593,8 @@
     </div>
 </div>
 
+<script async src="https://www.tiktok.com/embed.js"></script>
+
 <script>
     // --- UTILITY & SETUP ---
     const chatLog = document.getElementById('chat-log');
@@ -578,6 +604,7 @@
     const sidebar = document.getElementById('sidebar');
     const collapseBtn = document.getElementById('collapse-btn');
     const greetingBtn = document.getElementById('greeting-btn');
+    const contactInfoBtn = document.getElementById('contactInfoBtn'); // Get reference to new contact button
     let conversationState = {};
     let currentLanguage = 'en';
     let currentTheme = 'theme-default';
@@ -682,7 +709,9 @@
             enrollNowFull: 'Enroll Now (Full Version)', fillOutForm: 'Fill out Enrollment Form',
             schoolAddressLabel: 'Address', schoolPhoneLabel: 'Phone', schoolEmailLabel: 'Email', schoolHoursLabel: 'Business Hours',
             contactUsTitle: 'Contact Us', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.en, // Link to schoolInfo
-            questionLabel: schoolInfo.questionLabel.en
+            questionLabel: schoolInfo.questionLabel.en,
+            videoSamples: 'Video Samples', // New
+            videoSamplesPrompt: 'Here are some video samples from our classes and student life. Enjoy!' // New
         },
         mm: {
             welcome: ' မင်္ဂလာပါ။  OKay Thai Language Center  မှ   ကြိုဆိုပါတယ်။   ကျွန်တော်က  AI Concierge  ပါ။ ဒီနေ့   ဘာအကူအညီပေးရမလဲခင်ဗျာ။ ',
@@ -719,7 +748,9 @@
             enrollNowFull: 'ယခုစာရင်းသွင်းရန် (အပြည့်အစုံ)', fillOutForm: 'စာရင်းသွင်းဖောင်ဖြည့်ရန်',
             schoolAddressLabel: 'လိပ်စာ', schoolPhoneLabel: 'ဖုန်း', schoolEmailLabel: 'အီးမေးလ်', schoolHoursLabel: 'ဖွင့်ချိန်',
             contactUsTitle: 'ဆက်သွယ်ရန်', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.mm, // Link to schoolInfo
-            questionLabel: schoolInfo.questionLabel.mm
+            questionLabel: schoolInfo.questionLabel.mm,
+            videoSamples: 'ဗီဒီယိုနမူနာများ', // New
+            videoSamplesPrompt: 'ကျွန်ုပ်တို့၏အတန်းများနှင့် ကျောင်းသားဘဝမှ ဗီဒီယိုနမူနာအချို့ဖြစ်ပါသည်။ ကြည့်ရှုခံစားပါ။' // New
         },
         th: {
             welcome: ' สวัสดีค่ะ ! ยินดีต้อนรับสู่  OKay Thai Language Center  ดิฉันคือ  AI Concierge  ค่ะ   วันนี้มีอะไรให้ช่วยคะ ',
@@ -756,7 +787,9 @@
             enrollNowFull: 'ลงทะเบียนตอนนี้ (ฉบับเต็ม)', fillOutForm: 'กรอกแบบฟอร์มลงทะเบียน',
             schoolAddressLabel: 'ที่อยู่', schoolPhoneLabel: 'โทรศัพท์', schoolEmailLabel: 'อีเมล', schoolHoursLabel: 'เวลาทำการ',
             contactUsTitle: 'ติดต่อเรา', culturalIntroBotGreeting: schoolInfo.culturalIntroBotGreeting.th, // Link to schoolInfo
-            questionLabel: schoolInfo.questionLabel.th
+            questionLabel: schoolInfo.questionLabel.th,
+            videoSamples: 'วิดีโอตัวอย่าง', // New
+            videoSamplesPrompt: 'นี่คือวิดีโอตัวอย่างจากชั้นเรียนและชีวิตนักศึกษาของเรา ขอให้สนุกกับการรับชมค่ะ!' // New
         }
     };
     function t(key, ...args) {
@@ -769,6 +802,7 @@
         saveToStorage('okayThaiLang', lang);
         updateSettingsUI();
         populateSidebarNav(); // Re-populate sidebar with new language
+        updateContactUsButtonText(); // Update Contact Us button text
         updateSchoolInfo(); // Update school info in sidebar
         chatLog.innerHTML = '';
         startConversation();
@@ -805,7 +839,7 @@
     function appendMessage(sender, content, isLoading = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${sender}`;
-        const avatar = sender === 'ai' ? ' 🤖 ' : ' 👤 ';
+        const avatar = sender === 'ai' ? ' 🤖 ' : ' 👤 '; // Emojis used for avatars, update if using images
         if (isLoading) messageDiv.id = 'loading-message';
         messageDiv.innerHTML = `<div class="avatar">${avatar}</div><div class="message-content">${content}</div>`;
         chatLog.appendChild(messageDiv);
@@ -971,11 +1005,23 @@
         addButton('seeOtherQuestions', showFaqOptions);
         addButton('mainMenu', startConversation);
     }
+
+    // Function to show lecturers with photos
     function showLecturers() {
         clearInputArea();
         let lecturerCards = `${t('lecturerIntro')}<br/><br/><div id="lecturer-list" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">`;
         data.lecturers.forEach(lecturer => {
-            lecturerCards += `<div class="card"><h3>${lecturer.name}</h3><p><strong>${t('qualificationLabel')}:</strong> ${lecturer.qualification[currentLanguage]}</p><p><strong>${t('workLabel')}:</strong> ${lecturer.workExperience[currentLanguage]}</p><p><strong>${t('teachingLabel')}:</strong> ${lecturer.teachingExperience[currentLanguage]}</p></div>`;
+            // Use lecturer.photo here
+            const photoSrc = lecturer.photo ? lecturer.photo : 'images/default_avatar.jpg'; // Fallback for missing photos
+            lecturerCards += `<div class="card" style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                <img src="${photoSrc}" alt="${lecturer.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-secondary);">
+                                <div>
+                                    <h3>${lecturer.name}</h3>
+                                    <p><strong>${t('qualificationLabel')}:</strong> ${lecturer.qualification[currentLanguage]}</p>
+                                    <p><strong>${t('workLabel')}:</strong> ${lecturer.workExperience[currentLanguage]}</p>
+                                    <p><strong>${t('teachingLabel')}:</strong> ${lecturer.teachingExperience[currentLanguage]}</p>
+                                </div>
+                            </div>`;
         });
         lecturerCards += `</div>`;
         appendMessage('ai', lecturerCards);
@@ -1150,14 +1196,51 @@
         addButton('mainMenu', startConversation);
     }
 
+    // New: Function to display video samples
+    function showVideoSamples() {
+        chatLog.innerHTML = ''; // Clear chat history
+        clearInputArea(); // Clear input buttons
+        appendMessage('ai', t('videoSamplesPrompt'));
+
+        // *** IMPORTANT: REPLACE THESE WITH YOUR ACTUAL TIKTOK VIDEO EMBED CODES ***
+        // To get the embed code:
+        // 1. Go to your TikTok video in a web browser.
+        // 2. Click the "Share" icon (usually a curved arrow).
+        // 3. Select "Embed".
+        // 4. Copy the entire HTML code provided.
+        // 5. Paste it here. Ensure 'data-video-id' and 'cite' match your video.
+        const tiktokEmbed1 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/PLACEHOLDER_VIDEO_ID_1" data-video-id="PLACEHOLDER_VIDEO_ID_1" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Sample Video 1 Description</p> <a target="_blank" title="♬ original sound - okay.thai.languag" href="https://www.tiktok.com/music/original-sound-PLACEHOLDER_MUSIC_ID_1">♬ original sound - okay.thai.languag</a> </section> </blockquote>`;
+
+        const tiktokEmbed2 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@okay.thai.languag/video/PLACEHOLDER_VIDEO_ID_2" data-video-id="PLACEHOLDER_VIDEO_ID_2" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@okay.thai.languag" href="https://www.tiktok.com/@okay.thai.languag?refer_url=embed">@okay.thai.languag</a> <p>Sample Video 2 Description</p> <a target="_blank" title="♬ original sound - okay.thai.languag" href="https://www.tiktok.com/music/original-sound-PLACEHOLDER_MUSIC_ID_2">♬ original sound - okay.thai.languag</a> </section> </blockquote>`;
+
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'video-sample-container';
+
+        // Append each video embed code to the container
+        videoContainer.innerHTML += tiktokEmbed1;
+        videoContainer.innerHTML += tiktokEmbed2;
+        // Add more video embeds here if needed
+
+        appendMessage('ai', videoContainer.outerHTML); // Append the whole container
+
+        // Important: After adding embeds dynamically, TikTok's embed.js might need to re-scan the DOM.
+        // It usually does this automatically if the script is loaded.
+        // If embeds don't render, you might need to manually trigger TikTok's rendering function
+        // which can be accessed via window.tiktok.embed.refresh() if it's exposed, but often not necessary.
+
+        addButton('mainMenu', startConversation);
+        addButton('askAnother', () => handleFreeformQuestion(t('anythingElse')));
+    }
+
+
     // --- DATA STORE ---
     const data = {
-        courses: {
-            "Normal Class": [
-                { id: 'normal-basic', name: {en: 'Normal Class - Basic', mm: ' သာမန်တန်း  -  အခြေခံ ', th: ' คลาสปกติ  -  พื้นฐาน '}, level: {en: 'Basic', mm: ' အခြေခံ ', th: ' พื้นฐาน '}, duration: '2 months', price: 'MMK 149,000', teaching: {en: 'Comprehensive online lessons focusing on foundational Thai grammar and vocabulary.', mm: ' အခြေခံထိုင်းသဒ္ဒါနှင့်   ဝေါဟာရကို   အဓိကထားသော   ပြည့်စုံသောအွန်လိုင်းသင်ခန်းစာများ။ ', th: ' บทเรียนออนไลน์ที่ครอบคลุมเน้นไวยากรณ์และคำศัพท์ภาษาไทยพื้นฐาน '} },
-                { id: 'normal-level2', name: {en: 'Normal Class - Level 2', mm: ' သာမန်တန်း  -  အဆင့်   ၂ ', th: ' คลาสปกติ  -  ระดับ  2'}, level: {en: 'Level 2', mm: ' အဆင့်   ၂ ', th: ' ระดับ  2'}, duration: '2 months', price: 'MMK 200,000', teaching: {en: 'Expands grammar, vocabulary, and practical conversations for daily life.', mm: ' နေ့စဉ်ဘဝအတွက်   သဒ္ဒါ၊ ဝေါဟာရနှင့်   လက်တွေ့စကားပြောစွမ်းရည်များ   တိုးချဲ့သင်ကြားခြင်း။ ', th: ' ขยายไวยากรณ์   คำศัพท์   และการสนทนาเชิงปฏิบัติสำหรับชีวิตประจำวัน '} },
-                { id: 'normal-level3', name: {en: 'Normal Class - Level 3', mm: ' သာမန်တန်း  -  အဆင့်   ၃ ', th: ' คลาสปกติ  -  ระดับ  3'}, level: {en: 'Level 3', mm: ' အဆင့်   ၃ ', th: ' ระดับ  3'}, duration: '3 months', price: 'MMK 300,000', teaching: {en: 'Advanced grammar, situational dialogues, and deeper cultural nuances.', mm: ' အဆင့်မြင့်သဒ္ဒါ၊ အခြေအနေအလိုက်စကားပြောဆိုမှုများနှင့်   ယဉ်ကျေးမှုဆိုင်ရာ   နက်နဲမှုများ။ ', th: ' ไวยากรณ์ขั้นสูง   บทสนทนาตามสถานการณ์   และความแตกต่างทางวัฒนธรรมที่ลึกซึ้งยิ่งขึ้น '} }
-            ],
+        courses: [
+            // Your course data remains here
+            { id: 'normal-basic', name: {en: 'Normal Class - Basic', mm: ' သာမန်တန်း  -  အခြေခံ ', th: ' คลาสปกติ  -  พื้นฐาน '}, level: {en: 'Basic', mm: ' အခြေခံ ', th: ' พื้นฐาน '}, duration: '2 months', price: 'MMK 149,000', teaching: {en: 'Comprehensive online lessons focusing on foundational Thai grammar and vocabulary.', mm: ' အခြေခံထိုင်းသဒ္ဒါနှင့်   ဝေါဟာရကို   အဓိကထားသော   ပြည့်စုံသောအွန်လိုင်းသင်ခန်းစာများ။ ', th: ' บทเรียนออนไลน์ที่ครอบคลุมเน้นไวยากรณ์และคำศัพท์ภาษาไทยพื้นฐาน '} },
+            { id: 'normal-level2', name: {en: 'Normal Class - Level 2', mm: ' သာမန်တန်း  -  အဆင့်   ၂ ', th: ' คลาสปกติ  -  ระดับ  2'}, level: {en: 'Level 2', mm: ' အဆင့်   ၂ ', th: ' ระดับ  2'}, duration: '2 months', price: 'MMK 200,000', teaching: {en: 'Expands grammar, vocabulary, and practical conversations for daily life.', mm: ' နေ့စဉ်ဘဝအတွက်   သဒ္ဒါ၊ ဝေါဟာရနှင့်   လက်တွေ့စကားပြောစွမ်းရည်များ   တိုးချဲ့သင်ကြားခြင်း။ ', th: ' ขยายไวยากรณ์   คำศัพท์   และการสนทนาเชิงปฏิบัติสำหรับชีวิตประจำวัน '} },
+            { id: 'normal-level3', name: {en: 'Normal Class - Level 3', mm: ' သာမန်တန်း  -  အဆင့်   ၃ ', th: ' คลาสปกติ  -  ระดับ  3'}, level: {en: 'Level 3', mm: ' အဆင့်   ၃ ', th: ' ระดับ  3'}, duration: '3 months', price: 'MMK 300,000', teaching: {en: 'Advanced grammar, situational dialogues, and deeper cultural nuances.', mm: ' အဆင့်မြင့်သဒ္ဒါ၊ အခြေအနေအလိုက်စကားပြောဆိုမှုများနှင့်   ယဉ်ကျေးမှုဆိုင်ရာ   နက်နဲမှုများ။ ', th: ' ไวยากรณ์ขั้นสูง   บทสนทนาตามสถานการณ์   และความแตกต่างทางวัฒนธรรมที่ลึกซึ้งยิ่งขึ้น '} }
+            ,
             "Children Class": [
                 { id: 'children-basic', name: {en: 'Children Class - Basic', mm: ' ကလေးတန်း  -  အခြေခံ ', th: ' คลาสเด็ก  -  พื้นฐาน '}, level: {en: 'Basic', mm: ' အခြေခံ ', th: ' พื้นฐาน '}, duration: '2 months', price: 'MMK 149,000', teaching: {en: 'Fun and interactive lessons designed for young learners.', mm: ' ပျော်စရာကောင်းပြီး   အပြန်အလှန်တုံ့ပြန်မှုရှိသော   သင်ခန်းစာများ။ ', th: ' บทเรียนที่สนุกสนานและโต้ตอบได้ซึ่งออกแบบมาสำหรับผู้เรียนรุ่นเยาว์ '} },
                 { id: 'children-level2', name: {en: 'Children Class - Level 2', mm: ' ကလေးတန်း  -  အဆင့်   ၂ ', th: ' คลาสเด็ก  -  ระดับ  2'}, level: {en: 'Level 2', mm: ' အဆင့်   ၂ ', th: ' ระดับ  2'}, duration: '2 months', price: 'MMK 200,000', teaching: {en: 'Engaging activities to expand vocabulary and simple sentence structures.', mm: ' ဝေါဟာရနှင့်   ရိုးရှင်းသောဝါကျတည်ဆောက်ပုံများကို   တိုးချဲ့ရန်အတွက်   ဆွဲဆောင်မှုရှိသော   လှုပ်ရှားမှုများ။ ', th: ' กิจกรรมที่มีส่วนร่วมเพื่อขยายคำศัพท์และโครงสร้างประโยคง่ายๆ '} }
@@ -1168,25 +1251,26 @@
             "Private Class": [
                 { id: 'private', name: {en: 'Private Class (Customized)', mm: ' သီးသန့်သင်တန်း  ( စိတ်ကြိုက် )', th: ' คลาสส่วนตัว  ( กำหนดเอง )'}, level: {en: 'N/A', mm: 'N/A', th: 'N/A'}, duration: 'Varies', price: 'Varies', teaching: {en: 'Personalized 1-on-1 sessions tailored to your specific goals and schedule.', mm: ' သင်၏   သီးခြားပန်းတိုင်များနှင့်   အချိန်ဇယားအတိုင်း   စိတ်ကြိုက်ပြုလုပ်ထားသော   တစ်ဦးချင်းသင်ခန်းစာများ။ ', th: ' เซสชันแบบตัวต่อตัวที่ปรับให้เหมาะกับเป้าหมายและตารางเวลาเฉพาะของคุณ '} }
             ]
-        },
+        ],
         faqs: [
+            // Your FAQ data remains here
             { category: 'Course Information', question: {en: 'What types of classes do you offer?', mm: ' ဘယ်လိုသင်တန်းအမျိုးအစားတွေ   ပေးပါသလဲ။ ', th: ' มีคลาสประเภทใดบ้าง '}, answer: {en: 'We offer: 1. Thai Speaking Only Class, 2. Thai 4 skills class, 3. One On One Thai Class, 4. Private group class, 5. Children\'s group class (5 students), 6. Private children\'s class.', mm: 'Okay Thai Language Center  တွင်   ၁ . ထိုင်းအခြေခံစကားပြောသီးသန်  ( Thai Speaking Only Class)  ၂ . ထိုင်းအခြေခံ   အရေးအဖတ်အပြောနားထောင်  ( Thai 4 skills class)  ၃ . တစ်ဦးချင်းသီးသန့်ထိုင်းဘာသာသင်တန်း  ( One On One Thai Class )  ၄ . သီးသန့်  private group  အတန်း   ၅ . ထိုင်းကလေးသီးသန့်   ၅ယောက်တစ်ဖွဲ့   အတန်း   ၆ . ကလေးတစ်ဦးချင်းသီးသန့်အတန်း ', th: ' ที่  OKay Thai Language Center  มี : 1.  คลาสเรียนพูดภาษาไทยเท่านั้น  2.  คลาส  4  ทักษะภาษาไทย  3.  คลาสเรียนภาษาไทยตัวต่อตัว  4.  คลาสกลุ่มส่วนตัว  5.  คลาสกลุ่มเด็ก  (5  คน ) 6.  คลาสส่วนตัวสำหรับเด็ก '} },
             { category: 'Teaching Method', question: {en: 'Who are the instructors?', mm: ' ဘယ်သူတွေသင်ကြားပေးမှာလဲ ', th: ' ใครเป็นผู้สอน '}, answer: {en: 'Teachers who have graduated with a major in Thai from the Yangon University of Foreign Languages will provide systematic instruction from the basics.', mm: ' ရန်ကုန်နိုင်ငံခြားဘာသာတက္ကသိုလ်မှ   ထိုင်းဘာသာအထူးပြုဖြင့်   ဘွဲ့ရထားသော   ဆရာ၊ဆရာမများမှ   အခြေခံမှစပြီး   စနစ်တကျသင်ကြားပေးပါတယ်ရှင့် ', th: ' ครูที่สำเร็จการศึกษา  chuyên ngành ภาษาไทยจากมหาวิทยาลัยภาษาต่างประเทศย่างกุ้งจะสอนอย่างเป็นระบบตั้งแต่พื้นฐาน '} },
             { category: 'Course Information', question: {en: 'Are there different levels in Thai language?', mm: ' ထိုင်းဘာသာမှာ  Level  ခွဲထားတာရှိလား ', th: ' ภาษาไทยมีระดับต่างๆ   หรือไม่ '}, answer: {en: 'In our school, the basic 4 skills class has 3 levels: Level 1, 2, and 3. The Thai speaking class is only offered at the basic level.', mm: ' ညီမတို့   သင်တန်းကျောင်းမှာ   အခြေခံ  4 skills  ကတော့  Level 1,2,3  ဆိုပြီး  3  ဆင့်ရှိပါတယ်ရှင့်   ထိုင်းစကားပြောအတန်းလေးကတော့    အခြေခံအတန်လေးဘဲဖွင့်ထားပါတယ်ရှင့် ', th: ' ที่โรงเรียนของเรา   คลาส  4  ทักษะพื้นฐานมี  3  ระดับคือ   ระดับ  1, 2  และ  3  ส่วนคลาสพูดภาษาไทยเปิดสอนเฉพาะระดับพื้นฐานเท่านั้น '} },
             { category: 'Teaching Method', question: {en: 'How are the classes taught?', mm: ' ဘယ်ကနေ   သင်ကြားပေးမှာလဲ ', th: ' สอนอย่างไร '}, answer: {en: 'We teach directly face-to-face with the teacher via the Zoom app. Before the class starts, a group is created on Telegram with the teacher. After the class, the video recording of the lesson is sent back to the Telegram group. If you miss a class for any reason, you can re-watch the video recordings.', mm: 'Zoom app  ကနေ   ဆရာမနဲ့  face to face  တိုက်ရိုက်သင်ပေးတာပါရှင့်   အတန်းမစခင်   ဆရာမနဲ့  Telegram  မှာ  group  ဖွဲ့ပေးထားပြီး   အတန်းချိန်ပြီးသွားတာနဲ့   သင်ထားတဲ့  video recording  ကို  Telegram group  ထဲမှာ   ပြန်ပို့ပေးပါတယ်ရှင့်   အကြောင်းတစ်စုံတစ်ရာကြောင့်   အတန်းပျက်ခဲ့လျှင်  video recording  များကို   ပြန်လည်ကြည့်ရူနိုင်ပါတယ်ရှင့် ', th: ' เราสอนแบบเห็นหน้ากับครูโดยตรงผ่านแอป  Zoom  ก่อนเริ่มเรียนจะมีการสร้างกลุ่มใน  Telegram  กับครู   หลังจากเรียนเสร็จแล้ว   วิดีโอบันทึกการสอนจะถูกส่งกลับไปในกลุ่ม  Telegram  หากคุณขาดเรียนด้วยเหตุผลใดก็ตาม   คุณสามารถดูวิดีโอบันทึกย้อนหลังได้ '} },
-            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁၄၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
+            { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁๔၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
         ],
         lecturers: [
-            { name: "TR. ZAW", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "5 years teaching experiences", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "} },
-            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Translator and Interpreter in Toyota Company", mm: "Toyota  ကုမ္ပဏီတွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยในบริษัทโตโยต้า "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
-            { name: "TR. SHWE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Thai translator and interpreter in Golden Sea MyanmarCo.,Ltd", mm: "Golden Sea Myanmar Co.,Ltd  တွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยใน  Golden Sea Myanmar Co.,Ltd"}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
-            { name: "TR. MAY", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
-            { name: "TR. HTOO", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "2 years teaching experience", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
-            { name: "TR. PHUE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่าမဘာသာไทยอิisระ "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
-            { name: "TR. SAKAR", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "1 year working experience in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၁   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  1  ปีในบริษัทไทย "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "} },
-            { name: "TR. SEINN", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "3 years teaching experience", mm: " ၃   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  3  ปี "} },
-            { name: "TR. HSU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Linguist 1 year", mm: " ထိုင်းဘာသာဗေဒပညာရှင်   ၁   နှစ် ", th: " นักภาษาศาสตร์ไทย  1  ปี "}, teachingExperience: {en: "5 years teaching experience", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "} },
-            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "} }
+            { name: "TR. ZAW", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "5 years teaching experiences", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "}, photo: 'images/tr_zaw.jpg' },
+            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Translator and Interpreter in Toyota Company", mm: "Toyota  ကုမ္ပဏီတွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยในบริษัทโตโยต้า "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_phyu.jpg' },
+            { name: "TR. SHWE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Thai translator and interpreter in Golden Sea MyanmarCo.,Ltd", mm: "Golden Sea Myanmar Co.,Ltd  တွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยใน  Golden Sea Myanmar Co.,Ltd"}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_shwe.jpg' },
+            { name: "TR. MAY", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_may.jpg' },
+            { name: "TR. HTOO", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "2 years teaching experience", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_htoo.jpg' },
+            { name: "TR. PHUE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่าမဘာသာไทยอิisระ "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "}, photo: 'images/tr_phue.jpg' },
+            { name: "TR. SAKAR", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "1 year working experience in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၁   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  1  ปีในบริษัทไทย "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_sakar.jpg' },
+            { name: "TR. SEINN", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยอิสระ "}, teachingExperience: {en: "3 years teaching experience", mm: " ၃   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  3  ปี "}, photo: 'images/tr_seinn.jpg' },
+            { name: "TR. HSU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Linguist 1 year", mm: " ထိုင်းဘာသာဗေဒပညာရှင်   ၁   နှစ် ", th: " นักภาษาศาสตร์ไทย  1  ปี "}, teachingExperience: {en: "5 years teaching experience", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "}, photo: 'images/tr_hsu.jpg' },
+            { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Freelance Thai Translator and Interpreter", mm: " အလွတ်တန်း   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่าမဘာသာไทยอิisระ "}, teachingExperience: {en: "1 year teaching experience", mm: " ၁   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  1  ปี "}, photo: 'images/tr_phyu_2.jpg' } // Assuming this is a different Phyu or a unique ID
         ]
     };
 
@@ -1196,23 +1280,25 @@
         addButton('findCourse', showCourseOptions, sidebarNav, '📚');
         addButton('findLevel', startLevelTest, sidebarNav, '🧠');
         addButton('conversationPractice', startConversationPractice, sidebarNav, '💬');
+        addButton('videoSamples', showVideoSamples, sidebarNav, '🎬'); // New Video Samples button
         addButton('meetLecturers', showLecturers, sidebarNav, '🧑‍🏫');
         addButton('askQuestion', showFaqOptions, sidebarNav, '❓');
         addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, '🧭');
         addButton('mainMenu', startConversation, sidebarNav, '🏠');
     }
 
-    // Update school info in sidebar
+    // Update school info in sidebar (now only triggered on language change, as the button replaces it)
     function updateSchoolInfo() {
-        const schoolInfoCard = document.querySelector('.school-info-card');
-        if (schoolInfoCard) {
-            schoolInfoCard.innerHTML = `
-                <h3>${t('contactUsTitle')}</h3>
-                <p><strong>${t('schoolAddressLabel')}:</strong> ${schoolInfo.address[currentLanguage]}</p>
-                <p><strong>${t('schoolPhoneLabel')}:</strong> ${schoolInfo.phone}</p>
-                <p><strong>${t('schoolEmailLabel')}:</strong> ${schoolInfo.email}</p>
-                <p><strong>${t('schoolHoursLabel')}:</strong> ${schoolInfo.businessHours[currentLanguage]}</p>
-            `;
+        // This function is still called by setLanguage, but the content is handled by showContactDetails
+        // when the user clicks the "Contact Us" button.
+        // The school-info-card element is now just a placeholder for the button text via JS,
+        // and its content is rendered in chatLog.
+    }
+
+    // New: Update Contact Us button text
+    function updateContactUsButtonText() {
+        if (contactInfoBtn) {
+            contactInfoBtn.querySelector('.button-text').textContent = t('contactUsButton');
         }
     }
 
@@ -1278,9 +1364,15 @@
         // Greeting sound button
         greetingBtn.addEventListener('click', playGreetingSound);
 
+        // Contact Us button in sidebar
+        if (contactInfoBtn) {
+            contactInfoBtn.addEventListener('click', showContactDetails);
+            updateContactUsButtonText(); // Set initial text
+        }
+
         createStars();
         populateSidebarNav(); // Populate sidebar on load
-        updateSchoolInfo(); // Populate school info on load
+        // updateSchoolInfo(); // No longer needed here as info is displayed on button click
         startConversation(); // Start the conversation in the main chat window
     });
 </script>
