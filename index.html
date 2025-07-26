@@ -514,10 +514,6 @@
         </div>
         <nav class="sidebar-nav" id="sidebar-nav">
             </nav>
-
-        <div class="school-info-card card">
-            </div>
-
         <a href="https://www.facebook.com/share/1AhRXANLEm/?mibextid=wwXIfr" target="_blank" class="action-button facebook-link">
             <span class="button-icon">📘</span> <span class="button-text">Facebook Page</span>
         </a>
@@ -769,7 +765,6 @@
         saveToStorage('okayThaiLang', lang);
         updateSettingsUI();
         populateSidebarNav(); // Re-populate sidebar with new language
-        updateSchoolInfo(); // Update school info in sidebar
         chatLog.innerHTML = '';
         startConversation();
     }
@@ -990,6 +985,7 @@
         appendMessage('ai', t('lecturerFollowUp'));
         addButton('findCourse', showCourseOptions);
         addButton('mainMenu', startConversation);
+
     }
 
     // --- PLACEMENT TEST FLOW ---
@@ -1135,6 +1131,24 @@
         userInputArea.appendChild(inputContainer);
         textInput.focus();
     }
+    function showContactInfo() {
+    clearInputArea();
+    chatLog.innerHTML = ''; // Clear the chat window for the new card
+
+    const contactCardHtml = `
+        <div class="card">
+            <h3>${t('contactUsTitle')}</h3>
+            <p><strong>${t('schoolAddressLabel')}:</strong> ${schoolInfo.address[currentLanguage]}</p>
+            <p><strong>${t('schoolPhoneLabel')}:</strong> ${schoolInfo.phone}</p>
+            <p><strong>${t('schoolEmailLabel')}:</strong> ${schoolInfo.email}</p>
+            <p><strong>${t('schoolHoursLabel')}:</strong> ${schoolInfo.businessHours[currentLanguage]}</p>
+        </div>
+    `;
+
+    appendMessage('ai', contactCardHtml);
+    appendMessage('ai', t('anythingElse'));
+    addButton('mainMenu', startConversation);
+}
 
     async function submitFreeformQuestion() {
         const input = document.getElementById('freeform-input');
@@ -1201,27 +1215,14 @@
     // Function to populate the sidebar navigation
     function populateSidebarNav() {
         sidebarNav.innerHTML = ''; // Clear existing buttons
-        addButton('findCourse', showCourseOptions, sidebarNav, '📚');
-        addButton('findLevel', startLevelTest, sidebarNav, '🧠');
-        addButton('conversationPractice', startConversationPractice, sidebarNav, '💬');
-        addButton('meetLecturers', showLecturers, sidebarNav, '🧑‍🏫');
-        addButton('askQuestion', showFaqOptions, sidebarNav, '❓');
-        addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, '🧭');
-        addButton('mainMenu', startConversation, sidebarNav, '🏠');
-    }
-
-    // Update school info in sidebar
-    function updateSchoolInfo() {
-        const schoolInfoCard = document.querySelector('.school-info-card');
-        if (schoolInfoCard) {
-            schoolInfoCard.innerHTML = `
-                <h3>${t('contactUsTitle')}</h3>
-                <p><strong>${t('schoolAddressLabel')}:</strong> ${schoolInfo.address[currentLanguage]}</p>
-                <p><strong>${t('schoolPhoneLabel')}:</strong> ${schoolInfo.phone}</p>
-                <p><strong>${t('schoolEmailLabel')}:</strong> ${schoolInfo.email}</p>
-                <p><strong>${t('schoolHoursLabel')}:</strong> ${schoolInfo.businessHours[currentLanguage]}</p>
-            `;
-        }
+    addButton('findCourse', showCourseOptions, sidebarNav, ' 📚 ');
+    addButton('findLevel', startLevelTest, sidebarNav, ' 🧠 ');
+    addButton('conversationPractice', startConversationPractice, sidebarNav, ' 💬 ');
+    addButton('meetLecturers', showLecturers, sidebarNav, ' 🧑‍🏫 ');
+    addButton('askQuestion', showFaqOptions, sidebarNav, ' ❓ ');
+    addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, ' 🧭 ');
+    addButton('contactUsTitle', showContactInfo, sidebarNav, ' 📞 '); // New line
+    addButton('mainMenu', startConversation, sidebarNav, ' 🏠 ');
     }
 
     // New: Play greeting sound using Web Speech API
@@ -1288,7 +1289,6 @@
 
         createStars();
         populateSidebarNav(); // Populate sidebar on load
-        updateSchoolInfo(); // Populate school info on load
         startConversation(); // Start the conversation in the main chat window
     });
 </script>
