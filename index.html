@@ -973,9 +973,17 @@
     }
     function showLecturers() {
         clearInputArea();
+        // Corrected the variable name here from 'llecturerCards'
         let lecturerCards = `${t('lecturerIntro')}<br/><br/><div id="lecturer-list" style="max-height: 300px; overflow-y: auto; padding-right: 10px;">`;
         data.lecturers.forEach(lecturer => {
-            lecturerCards += `<div class="card"><h3>${lecturer.name}</h3><p><strong>${t('qualificationLabel')}:</strong> ${lecturer.qualification[currentLanguage]}</p><p><strong>${t('workLabel')}:</strong> ${lecturer.workExperience[currentLanguage]}</p><p><strong>${t('teachingLabel')}:</strong> ${lecturer.teachingExperience[currentLanguage]}</p></div>`;
+            lecturerCards += `
+                <div class="card">
+                    <img src="${lecturer.photoUrl}" alt="Photo of ${lecturer.name}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 10px; display: block;">
+                    <h3>${lecturer.name}</h3>
+                    <p><strong>${t('qualificationLabel')}:</strong> ${lecturer.qualification[currentLanguage]}</p>
+                    <p><strong>${t('workLabel')}:</strong> ${lecturer.workExperience[currentLanguage]}</p>
+                    <p><strong>${t('teachingLabel')}:</strong> ${lecturer.teachingExperience[currentLanguage]}</p>
+                </div>`;
         });
         lecturerCards += `</div>`;
         appendMessage('ai', lecturerCards);
@@ -1177,7 +1185,7 @@
             { category: 'Fees', question: {en: 'How much is the course fee?', mm: ' သင်တန်းကြေး   ဘယ်လောက်လဲ ', th: ' ค่าเล่าเรียนเท่าไหร่ '}, answer: {en: 'The regular course fee is 149,000 MMK. With the rainy season promotion of a 20,000 MMK discount, it will only cost 129,000 MMK.', mm: ' ပုံမှန်သင်တန်းကြေးက   မြန်မာငွေ   ၁၄၉ , ၀၀၀   ကျပ်   ပါရှင့်   မိုးရာသီပရိုမိုရှင်း   ၂၀ , ၀၀၀ကျပ်  discount  လေးရှိလို့   ၁၂၉ , ၀၀၀   ကျပ်သာကျသင့်ပါမယ်ရှင့် ', th: ' ค่าเล่าเรียนปกติคือ  149,000  จ๊าด   พร้อมโปรโมชั่นฤดูฝนลด  20,000  จ๊าด   จะเหลือเพียง  129,000  จ๊าดเท่านั้น '} }
         ],
         lecturers: [
-            { name: "TR. ZAW", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "5 years teaching experiences", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "} },
+            { name: "TR. ZAW", photoUrl: "images/Zaw.png", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "5 years teaching experiences", mm: " ၅   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  5  ปี "} },
             { name: "TR. PHYU", qualification: {en: "B.A (Thai, YUFL)", mm: "B.A (Thai, YUFL)", th: "B.A (Thai, YUFL)"}, workExperience: {en: "Thai Translator and Interpreter in Toyota Company", mm: "Toyota  ကုမ္ပဏီတွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยในบริษัทโตโยต้า "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
             { name: "TR. SHWE", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "Thai translator and interpreter in Golden Sea MyanmarCo.,Ltd", mm: "Golden Sea Myanmar Co.,Ltd  တွင်   ထိုင်းဘာသာပြန်နှင့်   စကားပြန် ", th: " นักแปลและล่ามภาษาไทยใน  Golden Sea Myanmar Co.,Ltd"}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
             { name: "TR. MAY", qualification: {en: "B.A (Q,Thai, YUFL)", mm: "B.A (Q,Thai, YUFL)", th: "B.A (Q,Thai, YUFL)"}, workExperience: {en: "3 years working experiences in Thai Company", mm: " ထိုင်းကုမ္ပဏီတွင်   ၃   နှစ်အလုပ်လုပ်ကိုင်ခဲ့သော   အတွေ့အကြုံ ", th: " ประสบการณ์การทำงาน  3  ปีในบริษัทไทย "}, teachingExperience: {en: "2 years teaching experiences", mm: " ၂   နှစ်သင်ကြားရေးအတွေ့အကြုံ ", th: " ประสบการณ์การสอน  2  ปี "} },
