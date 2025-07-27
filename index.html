@@ -1284,15 +1284,15 @@
     // Function to populate the sidebar navigation
     function populateSidebarNav() {
         sidebarNav.innerHTML = ''; // Clear existing buttons
-        addButton('findCourse', showCourseOptions, sidebarNav, ' 📚 ');
-        addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, ' 💬 '); // Moved to the top and renamed
-        addButton('findCourse', showCourseOptions, sidebarNav, ' 📚 ');
-        addButton('findLevel', startLevelTest, sidebarNav, ' 🧠 ');
-        addButton('conversationPractice', startConversationPractice, sidebarNav, ' 🗣️ '); // Changed icon for clarity
-        addButton('meetLecturers', showLecturers, sidebarNav, ' 🧑‍🏫 ');
-        addButton('askQuestion', showFaqOptions, sidebarNav, ' ❓ '); // Name changed to "FAQs"
-        addButton('contactUsTitle', showContactInfo, sidebarNav, ' 📞 ');
-        addButton('mainMenu', startConversation, sidebarNav, ' 🏠 ');
+    addButton('findCourse', showCourseOptions, sidebarNav, ' 📚 ');
+    addButton('findLevel', startLevelTest, sidebarNav, ' 🧠 ');
+    addButton('conversationPractice', startConversationPractice, sidebarNav, ' 💬 ');
+    addButton('meetLecturers', showLecturers, sidebarNav, ' 🧑‍🏫 ');
+    addButton('askQuestion', showFaqOptions, sidebarNav, ' ❓ ');
+    addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, ' 🧭 ');
+    addButton('contactUsTitle', showContactInfo, sidebarNav, ' 📞 '); // New line
+    addButton('mainMenu', startConversation, sidebarNav, ' 🏠 ');
+    }
 
     // New: Play greeting sound using Web Speech API
     function playGreetingSound() {
