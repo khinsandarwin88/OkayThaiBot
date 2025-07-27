@@ -591,7 +591,7 @@
         <div class="chat-header">
             <div class="header-title">
                 <h1>Chat with OKay Thai</h1>
-                <p>မင်္ဂလာပါ။ สวัสดีค่ะ ! How can I assist you today?</p>
+                <p>မင်္ဂလာပါ။ สวัสดีค่ะ ! 🙏🙏🙏 How can I assist you today?</p>
             </div>
             <div class="top-right-settings">
                 <button class="settings-btn" id="greeting-btn" title="Play Greeting">🔊</button>
@@ -869,7 +869,7 @@
     function appendMessage(sender, content, isLoading = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${sender}`;
-        const avatar = sender === 'ai' ? ' 🤖 ' : ' 👤 ';
+        const avatar = sender === 'ai' ? ' 👩🏻‍🏫 ' : ' 🧑🏻‍💻 ';
         if (isLoading) messageDiv.id = 'loading-message';
         messageDiv.innerHTML = `<div class="avatar">${avatar}</div><div class="message-content">${content}</div>`;
         chatLog.appendChild(messageDiv);
@@ -1284,12 +1284,12 @@
     // Function to populate the sidebar navigation
     function populateSidebarNav() {
         sidebarNav.innerHTML = ''; // Clear existing buttons
+    addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, ' 💬 ');
     addButton('findCourse', showCourseOptions, sidebarNav, ' 📚 ');
     addButton('findLevel', startLevelTest, sidebarNav, ' 🧠 ');
-    addButton('conversationPractice', startConversationPractice, sidebarNav, ' 💬 ');
+    addButton('conversationPractice', startConversationPractice, sidebarNav, ' 🗣️ ');
     addButton('meetLecturers', showLecturers, sidebarNav, ' 🧑‍🏫 ');
     addButton('askQuestion', showFaqOptions, sidebarNav, ' ❓ ');
-    addButton('culturalCompass', startCulturalCompassChatbot, sidebarNav, ' 🧭 ');
     addButton('contactUsTitle', showContactInfo, sidebarNav, ' 📞 '); // New line
     addButton('mainMenu', startConversation, sidebarNav, ' 🏠 ');
     }
