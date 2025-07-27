@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OKay Thai Bot - AI Concierge</title>
+<title>OKay Thai Bot - AI Buddy</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lexend:wght@400;600&family=Pacifico;amp;family=Montserrat:wght@700&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -219,6 +219,74 @@
         --ai-bubble-bg: #2a2540;
         --button-bg: linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787);
         --button-hover-bg: linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787);
+    }
+    body.theme-midnight-bloom {
+        --bg-gradient: linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        --bg-chat-window: rgba(15, 12, 41, 0.85);
+        --border-glow: rgba(236, 72, 153, 0.3); /* Soft Magenta Glow */
+        --accent-glow: #ec4899; /* Vibrant Magenta */
+         --accent-secondary: #f9a8d4; /* Lighter Pink */
+        --text-primary: #f3f4f6; /* Off-white */
+        --text-secondary: #d1d5db; /* Light Gray */
+        --user-bubble-bg: linear-gradient(145deg, #8e44ad 0%, #c0392b 100%); /* A placeholder, consider a more muted tone */
+        --ai-bubble-bg: #2d3748; /* Dark Slate */
+        --button-bg: linear-gradient(90deg, #ec4899 0%, #a855f7 100%);
+        --button-hover-bg: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+    }
+    body.theme-midnight-bloom .header-title h1 {
+        font-family: var(--font-fancy);
+        font-size: 2.2rem;
+        color: #f3f4f6;
+        text-shadow: 0 0 15px var(--accent-glow), 0 0 5px #fff;
+        animation: floatTitle 3s infinite ease-in-out;
+    }
+    body.theme-midnight-bloom .header-title p {
+        color: var(--text-secondary);
+        font-family: var(--font-bold);
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+    body.theme-midnight-bloom .action-button {
+        font-family: var(--font-bold);
+        background: var(--button-bg);
+        color: white;
+        border: 1px solid var(--border-glow);
+        box-shadow: 0 0 12px var(--border-glow), 0 2px 8px rgba(0,0,0,0.5);
+        font-size: 1.1rem;
+        transition: all 0.3s ease, transform 0.2s ease;
+    }
+    body.theme-midnight-bloom .action-button:hover {
+        background: var(--button-hover-bg);
+        box-shadow: 0 0 20px var(--accent-glow);
+        transform: translateY(-3px) scale(1.05);
+    }
+    body.theme-midnight-bloom .user .message-content {
+        background: #4a5568;
+        color: var(--text-primary);
+        box-shadow: 0 0 12px rgba(0,0,0,0.4);
+    }
+    body.theme-midnight-bloom .ai .avatar {
+        background: var(--accent-glow);
+        color: white;
+        box-shadow: 0 0 10px var(--accent-glow);
+    }
+    body.theme-midnight-bloom .card {
+        background: rgba(45, 55, 72, 0.8);
+        border: 1px solid var(--border-glow);
+        color: var(--text-primary);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    body.theme-midnight-bloom .card h3 {
+        font-family: var(--font-fancy);
+        color: var(--accent-secondary);
+        text-shadow: 0 0 8px var(--accent-glow);
+        font-size: 1.3rem;
+    }
+    body.theme-midnight-bloom #chat-log::-webkit-scrollbar-thumb {
+        background: var(--accent-glow);
+    }
+    body.theme-midnight-bloom #chat-log::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-secondary);
     }
     body.theme-pride .action-button { color: white; border: none; opacity: 0.8; }
     body.theme-pride .action-button:hover { opacity: 1; }
@@ -510,7 +578,7 @@
         <button id="collapse-btn" title="Collapse Sidebar">☰</button>
         <div class="sidebar-header">
             <h1>OKay Thai Bot</h1>
-            <p>Your AI Concierge</p>
+            <p>Your AI Buddy</p>
         </div>
         <nav class="sidebar-nav" id="sidebar-nav">
             </nav>
@@ -523,7 +591,7 @@
         <div class="chat-header">
             <div class="header-title">
                 <h1>Chat with OKay Thai</h1>
-                <p>How can I assist you today?</p>
+                <p>မင်္ဂလာပါ။ สวัสดีค่ะ ! How can I assist you today?</p>
             </div>
             <div class="top-right-settings">
                 <button class="settings-btn" id="greeting-btn" title="Play Greeting">🔊</button>
@@ -556,6 +624,7 @@
         <div class="settings-section">
             <div class="settings-options" id="theme-options">
                 <button class="option-btn" data-theme="theme-default"> ✨  Celestial Aura</button>
+                <button class="option-btn" data-theme="theme-midnight-bloom">  🌙   Midnight Bloom</button>
                 <button class="option-btn" data-theme="theme-high-contrast"> 👁️  High Contrast</button>
                 <button class="option-btn" data-theme="theme-low-sensory"> 🧠  Low Sensory</button>
                 <button class="option-btn" data-theme="theme-pride"> 🌈  Pride</button>
